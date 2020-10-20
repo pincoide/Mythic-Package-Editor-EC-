@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace Mythic.Package
 {
