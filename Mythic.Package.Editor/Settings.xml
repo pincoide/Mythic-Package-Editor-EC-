@@ -47,6 +47,14 @@
     <Option>Build/MultiCollection/</Option>
     <Option>Data/TileArtLegacy/</Option>
     <Option>Build/TileArtLegacy/</Option>
+    <Option>Data/Interface/</Option>
+    <Option>Data/Interface/Login/</Option>
+    <Option>Data/Interface/Login/Source/</Option>
+    <Option>Data/Interface/Login/Textures/</Option>
+    <Option>Data/Interface/InterfaceCore/</Option>
+    <Option>Data/Interface/InterfaceCore/Source/</Option>
+    <Option>Data/Interface/InterfaceCore/Textures/</Option>
+    <Option>Data/Interface/InterfaceCore/Fonts/</Option>
   </Setting>
   <Setting>
     <Name>SettingsPages</Name>

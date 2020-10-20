@@ -1264,7 +1264,7 @@
             // 
             this.FolderFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.FolderFiles.Image = global::Mythic.Package.Editor.Properties.Resources.Folder;
-            this.FolderFiles.Location = new System.Drawing.Point(504, 436);
+            this.FolderFiles.Location = new System.Drawing.Point(504, 437);
             this.FolderFiles.Name = "FolderFiles";
             this.FolderFiles.Size = new System.Drawing.Size(65, 23);
             this.FolderFiles.TabIndex = 14;
