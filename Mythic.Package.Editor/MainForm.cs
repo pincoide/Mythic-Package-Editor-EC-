@@ -859,6 +859,24 @@ namespace Mythic.Package.Editor
 			{
 				UnpackMythicPackageArgs args = null;
 				string path = Globals.Settings.OutputPath;
+
+				// if there is no path set on the stored settings, we set a default one.
+				if ( !Directory.Exists( path ) )
+                {
+					// default path
+					path = Path.Combine( Application.StartupPath, "Output" );
+
+					// store the default path
+					Globals.Settings.OutputPath = path;
+
+					// save the settings
+					Globals.Settings.Save();
+				}
+
+				// if the default path has never been used, we create the folder
+				if ( !Directory.Exists( path ) )
+					Directory.CreateDirectory( path );
+
 				bool innerPath = Globals.Settings.WithInnerPath;
 
 				if ( ListBox.SelectedItems.Count > 0 )
