@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+	<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+	<title>Details</title>
+	<style type="text/css">
+		a, h1, h2, h3  
+		{
+			color: #4C320E;
+			font-weight: bold;
+		}
+		p, ol
+		{
+			color: #4C320E;
+		}
+	</style>
+</head>
+<body>
+	<h2>Basic Description</h2>
+
+	<h3>Mythic Package File (.uop)</h3>
+	<p>It is a package containing compressed files. Package is divided into blocks, each holding up to 1000 files. 
+	This makes it easier for client to quickly access a file within a package. Since package doesn't contain file 
+	names, client has to hash a file name before accessing it.</p>
+	<h3>Mythic Package Editor</h3>	
+	<p>This is the basic look of the Mythic Package Editor.</p>
+	<img alt="Program" src="Program.jpg">
+	<h3>Functionalities:</h3>
+	
+	<ol>
+		<li><b>Tree view:</b> This area shows opened Mythic Package Files (.uop). One can expand an entry to display package blocks.</li>
+		<li>
+			<b>File view:</b> Here all the files from selected block are displayed. This is where dictionary comes into play.
+			<p>Dictionary contains hashes and matching file names. When one opens (clicks on Block_x) a block, it searches for a 
+			file name in a dictionary. If it finds it, actual name is displayed in file view. If it doesn't, it displays default name, 
+			which is <i>Index_X</i>.</p>
+		</li>
+		<li><b>Details:</b> Here are displayed details of a selected entry.</li>
+		<li><b>Toolbar:</b> This area is used to quickly access necessary features of this software.<br>
+			<ul>
+				<li><img alt="New file" src="New.png"> Creates a new Mythic Package File (.uop) in Tree View.</li>
+				<li><img alt="Open file" src="Folder.png"> Opens existing Mythic Package File (.uop) and displays it in Tree View.</li>
+				<li><img alt="Save file" src="Save.png"> Saves changes made to selected Mythic Package File (.uop).</li>
+				<li><img alt="Open dictionary" src="Folder.png"> Prompts one to load new dictionary.</li>
+				<li><img alt="Save dictionary" src="Save.png"> Saves changes to dictionary (if any).</li>
+				<li><img alt="Merge dictionary" src="Merge.png"> Prompts one to select dictionary file and merges them into already opened one. </li>
+				<li><img alt="Add file" src="Add.png"> Adds a new file to or whole folder to selected Mythic Package File (.uop).</li>
+				<li><img alt="Remove file" src="Remove.png"> Removes a file or entire block from Mythic Package File (.uop). Changes will be applied when one clicks Save file.</li>
+				<li><img alt="Unpack file" src="Unpack.png"> Unpacks selected file or entire block to destination, provided in Settings.</li>
+				<li><img alt="Replace file" src="Replace.png"> Replaces selected file (in File View) with another one.</li>
+
+			</ul>
+		</li>
+		<li><b>Hash Search:</b> One can match unknown file names in selected entity (either package, block, single or 
+		multiple files) with content of text box to the right of the button. More details <a href="HashSearch.htm">here</a>.
+		</li>
+		<li><b>Text search:</b> searches through all open packages and matches content of text box to known file names.</li>
+	</ol>
+	
+</body>

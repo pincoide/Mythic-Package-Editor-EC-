@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Settings>
+  <Setting>
+    <Name>Language</Name>
+    <Value>Eng.xml</Value>
+    <Option>Eng.xml</Option>
+  </Setting>
+  <Setting>
+    <Name>OutputFolder</Name>
+    <Value>C:\Documents and Settings\Grego\My Documents\Visual Studio 2008\Projects\Mythic\Mythic.Package.Editor\bin\Debug\Test\</Value>
+  </Setting>
+  <Setting>
+    <Name>WithInnerPath</Name>
+    <Value>true</Value>
+  </Setting>
+  <Setting>
+    <Name>DisplayFullPath</Name>
+    <Value>false</Value>
+  </Setting>
+  <Setting>
+    <Name>InnerDirectory</Name>
+    <Value>Data/WorldArt/</Value>
+    <Option>Data/WorldArt/</Option>
+    <Option>Build/WorldArt/</Option>
+    <Option>Data/Maps/</Option>
+    <Option>Data/Definitions/Terrain/</Option>
+    <Option>Build/TerrainDefinition/</Option>
+    <Option>Data/Statics/</Option>
+    <Option>Data/Definitions/TileArt/</Option>
+    <Option>Build/TileArt/</Option>
+    <Option>Data/Textures/</Option>
+    <Option>Build/TerrainTexture/</Option>
+    <Option>Data/Sectors/</Option>
+    <Option>Build/Sectors/</Option>
+    <Option>Data/Definitions/LegacyTerrain/</Option>
+    <Option>Data/Definitions/Animation/</Option>
+    <Option>Build/AnimationDefinition/</Option>
+    <Option>Data/Definitions/Animation/</Option>
+    <Option>Build/AnimationSequence/</Option>
+    <Option>Data/Definitions/Effect/</Option>
+    <Option>Build/EffectDefinitionCollection/</Option>
+    <Option>Data/Anim/</Option>
+    <Option>Data/LocalizedStrings/</Option>
+    <Option>Build/AnimationFrame/</Option>
+    <Option>Build/Paperdoll/</Option>
+    <Option>Data/Definitions/Multi/</Option>
+    <Option>Build/MultiCollection/</Option>
+    <Option>Data/TileArtLegacy/</Option>
+    <Option>Build/TileArtLegacy/</Option>
+  </Setting>
+  <Setting>
+    <Name>SettingsPages</Name>
+    <Option>Mythic.Package.Editor.GeneralPage</Option>
+  </Setting>
+</Settings>

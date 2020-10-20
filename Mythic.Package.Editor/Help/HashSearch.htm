@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+	<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+	<title>Details</title>
+	<style type="text/css">
+		a, h1, h2, h3  
+		{
+			color: #4C320E;
+			font-weight: bold;
+		}
+		p, ol, ul
+		{
+			color: #4C320E;
+		}
+		code
+		{			
+			font-size: small;
+			font-family: "Courier New";
+			color: #4C320E;
+		}
+}
+	</style>
+</head>
+<body>
+	<h2>Hash Search</h2>
+	<p>This feature helps you to find out unknown file names in dictionary. There are multiple types of this search:</p>
+	<ul>
+		<li><b>Text search:</b> Tries to match content of the text box to selected entities (either package, block, single or 
+		multiple files).</li>
+		<li><b>Expression search:</b> This is used when you want to match multiple searches at the same time.
+			<p>Syntax: <code>text<b>{start-finish}</b>text</code></p>  
+			<ul>
+				<li><b>start</b> - start of the search. Can range from 0 to z.</li>
+				<li><b>finish</b> - end of the search. Can range from 0 to z.</li>
+			</ul>
+			<p>Note: Length of <b>start</b> must be the same as length of <b>finish</b>. There can be multiple entries in the search query.
+			Text must be in lower case.</p>
+			<p>Warning: <b>This search is time consuming so be patient.</b></p>
+			<p>Examples:</p>
+			<ul>
+				<li>
+					<code>data/definitions/hues/hue161{3-7}.bmp</code><br>
+					This query will go through the following file names:<br>
+					<p><code>
+						data/definitions/hues/hue1613.bmp<br>
+						data/definitions/hues/hue1614.bmp<br>
+						data/definitions/hues/hue1615.bmp<br>
+						data/definitions/hues/hue1616.bmp<br>
+						data/definitions/hues/hue1617.bmp<br>
+					</code></p>
+				</li>				
+				<li>
+					<code>data/definitions/hues/{aaa-zzz}16{33-77}.bmp</code><br>
+					This query will go through the following file names:<br>
+					<p><code>
+						data/definitions/hues/aaa1633.bmp<br>
+						data/definitions/hues/aaa1634.bmp<br>
+						data/definitions/hues/aaa1635.bmp<br>
+						data/definitions/hues/aaa1636.bmp<br>
+						...<br>
+						data/definitions/hues/aaa1677.bmp<br>
+						data/definitions/hues/aab1633.bmp<br>				
+						data/definitions/hues/aab1634.bmp<br>
+						...<br>			
+						data/definitions/hues/zzz1677.bmp<br>
+					</code></p>
+				</li>
+				<li>
+					<code>data/definitions/hues/{0000000-zzzzzzz}.bmp</code><br>
+					This query will go through the following file names:<br>
+					<p><code>
+						data/definitions/hues/0000000.bmp<br>						
+						data/definitions/hues/0000001.bmp<br>
+						data/definitions/hues/0000002.bmp<br>
+						...<br>
+						data/definitions/hues/0000009.bmp<br>
+						data/definitions/hues/000000a.bmp<br>
+						data/definitions/hues/000000b.bmp<br>
+						...<br>
+						data/definitions/hues/000000z.bmp<br>
+						data/definitions/hues/0000010.bmp<br>
+						...<br>
+						data/definitions/hues/zzzzzzz.bmp<br>
+					</code></p>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</body>

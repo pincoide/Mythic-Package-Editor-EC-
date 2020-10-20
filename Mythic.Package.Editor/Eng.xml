@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Language name="English">
+	<!-- Main Form -->
+	<entry key="MainForm_Title">Mythic Package Editor</entry>
+
+	<entry key="MainForm_File">File</entry>
+	<entry key="MainForm_File_New">New</entry>
+	<entry key="MainForm_File_Open">Open</entry>
+	<entry key="MainForm_File_Close">Close</entry>
+	<entry key="MainForm_File_Save">Save</entry>
+	<entry key="MainForm_File_Exit">Exit</entry>
+
+	<entry key="MainForm_Dictionary">Dictionary</entry>
+	<entry key="MainForm_Dictionary_Load">Load</entry>
+	<entry key="MainForm_Dictionary_Save">Save</entry>
+	<entry key="MainForm_Dictionary_Merge">Merge</entry>
+	<entry key="MainForm_Dictionary_Update">Update</entry>
+	<entry key="MainForm_Dictionary_Update_Start">Start</entry>
+	<entry key="MainForm_Dictionary_Update_Attach">Attach</entry>
+	<entry key="MainForm_Dictionary_Update_Detach">Detach</entry>
+
+	<entry key="MainForm_Help">Help</entry>
+	<entry key="MainForm_Help_About">About</entry>
+	<entry key="MainForm_Button_SearchText">Text</entry>
+	<entry key="MainForm_Button_SearchHash">Hash</entry>
+
+	<entry key="MainForm_SearchBox_ToolTip_MissingBracket">Missing '{0}'!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_InvalidBracketOrder">Bracket '{' must be before '}'!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_InvalidLength">Length of first part must be the same as second part!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_NullLength">Length of both parts must be greater than 0!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_InvalidCharacters">Invalid characters in one of the parts (only 0-9 or a-z are valid)!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_NothingSelected">Nothing selected!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_ErrorParsing">Error parsing '{0}'!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_Invalid">Invalid expression!</entry>
+	<entry key="MainForm_SearchBox_ToolTip_Title">Error</entry>
+
+	<entry key="MainMenu_ToolBarToolTip_New">New Mythic Package file</entry>
+	<entry key="MainMenu_ToolBarToolTip_Open">Open Mythic Package file</entry>
+	<entry key="MainMenu_ToolBarToolTip_Save">Save modified Mythic Package file</entry>
+	<entry key="MainMenu_ToolBarToolTip_Close">Close Mythic Package file</entry>
+	<entry key="MainMenu_ToolBarToolTip_DictionaryOpen">Open dictionary</entry>
+	<entry key="MainMenu_ToolBarToolTip_DictionarySave">Save dictionary</entry>
+	<entry key="MainMenu_ToolBarToolTip_DictionaryMerge">Merge current dictionary with another</entry>
+	<entry key="MainMenu_ToolBarToolTip_Add">Add new file to selected Package</entry>
+	<entry key="MainMenu_ToolBarToolTip_Remove">Remove block or a file from Package</entry>
+	<entry key="MainMenu_ToolBarToolTip_Unpack">Unpack selected item</entry>
+	<entry key="MainMenu_ToolBarToolTip_Replace">Replace selected file in the Package</entry>
+
+
+	<!-- Package tab -->
+	<entry key="MainForm_PackageTab_Title">Package Details</entry>
+	<entry key="MainForm_PackageTab_General">General</entry>
+	<entry key="MainForm_PackageTab_FullName">Full name:</entry>
+	<entry key="MainForm_PackageTab_Attributes">Attributes:</entry>
+	<entry key="MainForm_PackageTab_Creation">Creation date:</entry>
+	<entry key="MainForm_PackageTab_Size">Size:</entry>
+
+	<entry key="MainForm_PackageTab_Header">Header</entry>
+	<entry key="MainForm_PackageTab_Version">Version:</entry>
+	<entry key="MainForm_PackageTab_Misc">Misc:</entry>
+	<entry key="MainForm_PackageTab_HeaderSize">Header size:</entry>
+	<entry key="MainForm_PackageTab_BlockSize">Block size:</entry>
+	<entry key="MainForm_PackageTab_FileCount">File count:</entry>
+
+	<!-- Block tab -->
+	<entry key="MainForm_BlockTab_Title">Block Details</entry>
+	<entry key="MainForm_BlockTab_Header">Header</entry>
+	<entry key="MainForm_BlockTab_FileCount">File count:</entry>
+	<entry key="MainForm_BlockTab_NextBlock">Next block:</entry>
+
+	<!-- File tab -->
+	<entry key="MainForm_FileTab_Title">File Details</entry>
+	<entry key="MainForm_FileTab_General">General</entry>
+	<entry key="MainForm_FileTab_Filename">Filename:</entry>
+	<entry key="MainForm_FileTab_FileHash">Hash:</entry>
+	<entry key="MainForm_FileTab_DataHash">Data hash:</entry>
+	<entry key="MainForm_FileTab_Compression">Compression</entry>
+	<entry key="MainForm_FileTab_CompressionType">Compression tpye:</entry>
+	<entry key="MainForm_FileTab_CompressedSize">Compressed size:</entry>
+	<entry key="MainForm_FileTab_DecompressedSize">Decompressed size:</entry>
+
+	<!-- Messages -->
+	<entry key="MainForm_Confirm_Remove">Are you sure you wan't to remove {0}?</entry>
+	<entry key="MainForm_Confirm_RemoveMultiple">Are you sure you wan't to remove {0} files?</entry>
+	<entry key="MainForm_Information_SelectPackageBlockFile">You must select package, block or a file before doing this.</entry>
+	<entry key="MainForm_Information_SelectBlockFile">You must select a block or a file before doing this.</entry>
+	<entry key="MainForm_Information_NothingSelected">You must select a Mythic Package before doing this.</entry>
+	<entry key="MainForm_Information_SelectFile">You must select one file before doing this.</entry>
+	<entry key="MainForm_Information_WorkerBusy">Please wait until task in background is finished.</entry>
+	<entry key="MainForm_Information_WorkerTerminate">A task is running in background. Terminate?</entry>
+	<entry key="MainForm_Information_WorkerError">An error occured. See {0} for details.</entry>
+	<entry key="MainForm_Information_InvalidProcess">Selected process is not valid.</entry>
+	<entry key="MainForm_Information_DictionaryNotChanged">No pending changes were found. Saving is not necessary.</entry>
+
+	<entry key="MainForm_Information_ProcessTerminated">Process terminated.</entry>
+	<entry key="MainForm_Information_NewFileNames">Found {0} new file names.</entry>
+	<entry key="MainForm_Information_NewHashes">Found {0} new hashes.</entry>
+	<entry key="MainForm_Information_MergingSummary">{0} new hashes and {1} file names in the disctionary.</entry>
+	<entry key="MainForm_Information_LoadingPackages">Loading packages...</entry>
+	<entry key="MainForm_Information_LoadingFinished">Loading finished.</entry>
+	<entry key="MainForm_Information_LoadingDictionary">Loading dictionary...</entry>
+	<entry key="MainForm_Information_DictionaryLoadingFinished">Loading dictionary finished.</entry>
+	<entry key="MainForm_Information_DictionarySavingFinished">Saving dictionary finished.</entry>
+	<entry key="MainForm_Information_DictionaryMergingFinished">Merging dictionary finished.</entry>
+	<entry key="MainForm_Information_UnpackingFinished">Unpacking finished.</entry>
+	<entry key="MainForm_Information_SavingPackage">Saving package...</entry>
+	<entry key="MainForm_Information_SavePackage">Save modified packages?</entry>
+	<entry key="MainForm_Information_SavingFinished">Saving finished.</entry>
+	<entry key="MainForm_Information_SavingDictionary">Saving dictionary...</entry>
+	<entry key="MainForm_Information_SaveDictionary">There are {0} new hashes and {1} new file names in dictionary. Save changes?</entry>
+	<entry key="MainForm_Information_MergingDictionary">Merging dictionary...</entry>
+	<entry key="MainForm_Information_UnpackingIn">Unpacking in {0}</entry>
+	<entry key="MainForm_Information_SpyingOn">Spying on {0}</entry>
+	<entry key="MainForm_Information_Searching">Searching! Warning: this may take a while!!!</entry>
+	<entry key="MainForm_Information_SearchExpressionFound">'{0}' file names found.</entry>
+	<entry key="MainForm_Information_SearchFound">'{0}' found.</entry>
+	<entry key="MainForm_Information_SearchNotFound">'{0}' not found.</entry>
+	<entry key="MainForm_Information_ErrorSaving">Error saving settings.</entry>
+	<entry key="MainForm_Information_ErrorUnset">Error removing file name!</entry>
+
+	<entry key="MainForm_SaveDictionary">Save changes to dictionary?</entry>
+
+
+
+	<!-- Open file dialog -->
+	<entry key="OpenFileDialog_File_Title">Open File</entry>
+	<entry key="OpenFileDialog_Executable_Title">Open Kingdom Reborn Executable</entry>
+	<entry key="OpenFileDialog_Dictionary_Title">Open Dictionary</entry>
+	<entry key="OpenFileDialog_Package_Title">Open Mythic Package</entry>
+
+	<!-- Save file dialog -->
+	<entry key="SaveFileDialog_Dictionary_Title">Save Dictionary</entry>
+
+	<!-- Save Options dialog -->
+	<entry key="SaveOptions_Title">Save Options</entry>  
+	<entry key="SaveOptions_Destination">Destination:</entry>
+	<entry key="SaveOptions_ReleaseDate">Release date:</entry>  
+	<entry key="SaveOptions_Button_Save">Save</entry>
+	<entry key="SaveOptions_Button_Cancel">Cancel</entry>  
+	<entry key="SaveOptions_ToolTip_Text">Invalid path!</entry>
+	<entry key="SaveOptions_ToolTip_Title">Error</entry>
+
+	<!-- Add File dialog -->
+	<entry key="AddFile_Title">Add File</entry>
+	<entry key="AddFile_File">Files:</entry>
+	<entry key="AddFile_InnerDirectory">Inner directory:</entry>
+	<entry key="AddFile_Compression">Compression:</entry>
+	<entry key="AddFile_Button_Add">Add</entry>
+	<entry key="AddFile_Button_Cancel">Cancel</entry>
+	<entry key="AddFile_Dialog_Title">Select Files</entry>
+	<entry key="AddFile_ToolTip_Text">Invalid file!</entry>
+	<entry key="AddFile_ToolTip_Title">Error</entry>
+	
+	<!-- Add File dialog -->
+	<entry key="AddFolder_Title">Add Folder</entry>
+	<entry key="AddFolder_File">Folder:</entry>
+	<entry key="AddFolder_Compression">Compression:</entry>
+	<entry key="AddFolder_Button_Add">Add</entry>
+	<entry key="AddFolder_Button_Cancel">Cancel</entry>
+	<entry key="AddFolder_ToolTip_Text">Invalid folder!</entry>
+	<entry key="AddFolder_ToolTip_Title">Error</entry>
+
+	<!-- Settings dialog -->
+	<entry key="SettingsDialog_Title">Settings</entry>
+	<entry key="SettingsDialog_Button_Reset">Reset</entry>
+	<entry key="SettingsDialog_Button_Cancel">Cancel</entry>
+	<entry key="SettingsDialog_Button_Save">Save</entry>
+
+	<entry key="SettingsDialog_GeneralPage_Title">General</entry>
+	<entry key="SettingsDialog_GeneralPage_Language">Language</entry>
+	<entry key="SettingsDialog_GeneralPage_CurrentLanguage">Current language:</entry>
+	<entry key="SettingsDialog_GeneralPage_Unpacking">Unpacking</entry>
+	<entry key="SettingsDialog_GeneralPage_OutputPath">Unpack in:</entry>
+	<entry key="SettingsDialog_GeneralPage_InnerFolder">Unpack with inner folder:</entry>
+	<entry key="SettingsDialog_GeneralPage_InnerFolders">Inner folders:</entry>
+	<entry key="SettingsDialog_GeneralPage_Description">Select destination folder:</entry>
+	<entry key="SettingsDialog_GeneralPage_ErrorTitle">Error</entry>
+	<entry key="SettingsDialog_GeneralPage_ErrorText">Invalid folder</entry>
+
+	<!-- Guess file dialog -->
+	<entry key="GuessFileDialog_Title">Guess File Name</entry>
+	<entry key="GuessFileDialog_Button_Check">Check</entry>
+	<entry key="GuessFileDialog_Button_Cancel">Cancel</entry>
+	<entry key="GuessFileDialog_InvalidName">Wrong file name!</entry>
+</Language>
