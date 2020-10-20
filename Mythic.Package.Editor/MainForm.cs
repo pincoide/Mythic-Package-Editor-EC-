@@ -448,6 +448,9 @@ namespace Mythic.Package.Editor
 
 					if ( package != null )
 					{
+						SaveFileDialog.Title = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_Save" );
+						SaveFileDialog.Filter = "UOP files|*.uop";
+
 						if ( SaveFileDialog.ShowDialog( this ) == DialogResult.OK )
 						{
 							StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SavingPackage" );

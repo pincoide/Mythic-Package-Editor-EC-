@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Mythic.Package
 {
@@ -225,7 +226,57 @@ namespace Mythic.Package
 						block.Index = index++;
 						block.Parent = this;
 
-						m_Blocks.Add( block );
+						// get the block total files count
+						int totalFiles = block.FileCount;
+
+						// the number of files exceed the block size? we create multiple blocks then...
+						if ( totalFiles > Header.BlockSize )
+                        {
+							// store the "next block" position stored in the bugged uop file
+							long nextBlock = block.NextBlock;
+
+							// update the files total
+							block.FileCount = Header.BlockSize;
+							block.NextBlock = reader.BaseStream.Position;
+
+							// add the block to the list
+							m_Blocks.Add( block );
+
+							// calculate how many files are left
+							totalFiles -= Header.BlockSize;
+
+							// now we create multiple blocks until all files have been loaded...
+							while ( totalFiles > 0 )
+                            {
+								// load the bloc
+								block = new MythicPackageBlock( reader, this, Math.Min( totalFiles, Header.BlockSize ), true );
+
+								// set the block index
+								block.Index = index++;
+
+								// set th block parent
+								block.Parent = this;
+
+								// calculate how many files are left
+								totalFiles -= Header.BlockSize;
+
+								// set the correct files count
+								block.FileCount = block.Files.Count;
+
+								// set this position as the start for the next block if there are more files to load
+								if ( totalFiles > 0 )
+									block.NextBlock = reader.BaseStream.Position;
+
+								else // use the stored "next block" position of the bugged uop file for the next block
+									block.NextBlock = nextBlock;
+
+								// add the block to the list
+								m_Blocks.Add( block );
+							}
+						}
+						else // the block is correct, we can just add it to the list
+							m_Blocks.Add( block );
+
 					}
 					while ( stream.Seek( block.NextBlock, SeekOrigin.Begin ) != 0 );
 				}

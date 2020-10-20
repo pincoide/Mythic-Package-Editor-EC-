@@ -70,6 +70,7 @@ namespace Mythic.Package
 		public int FileCount
 		{
 			get{ return m_FileCount; }
+			set { m_FileCount = value; }
 		}
 		#endregion
 
@@ -82,6 +83,7 @@ namespace Mythic.Package
 		public long NextBlock
 		{
 			get{ return m_NextBlock; }
+			set{ m_NextBlock = value; }
 		}
 		#endregion
 
@@ -153,12 +155,23 @@ namespace Mythic.Package
 		/// </summary>
 		/// <param name="reader">Binary file (.uop source).</param>
 		/// <param name="parent">Parent package.</param>
-		public MythicPackageBlock( BinaryReader reader, MythicPackage parent )
+		/// <param name="filesToLoad">Amount of files to load (default = block size)</param>
+		/// <param name="noHeader">Do we have to load the block header?</param>
+		public MythicPackageBlock( BinaryReader reader, MythicPackage parent, int filesToLoad = 0, bool noHeader = false )
 		{
 			m_Parent = parent;
 
-			m_FileCount = reader.ReadInt32();
-			m_NextBlock = reader.ReadInt64();
+			m_FileCount = 0;
+			m_NextBlock = 0;
+
+			if ( !noHeader )
+            {
+				m_FileCount = reader.ReadInt32();
+				m_NextBlock = reader.ReadInt64();
+			}
+
+			if ( filesToLoad == 0 )
+				filesToLoad = parent.Header.BlockSize;
 
 			MythicPackageFile file;
 			int index = 0;
@@ -173,7 +186,7 @@ namespace Mythic.Package
 
 				UpdateProgress( parent.Blocks.Count * parent.Header.BlockSize + index, parent.Header.FileCount );
 			}
-			while ( index < m_FileCount );
+			while ( index < filesToLoad );
 		}
 		#endregion
 

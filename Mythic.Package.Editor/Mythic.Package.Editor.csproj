@@ -290,10 +290,12 @@
     <ProjectReference Include="..\Mythic.Package\Mythic.Package.csproj">
       <Project>{1F230513-01F3-462A-94FF-836620AAB0D7}</Project>
       <Name>Mythic.Package</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
     <ProjectReference Include="..\Package.Spy\Mythic.Package.Spy.csproj">
       <Project>{3EFCD8B1-8851-4714-ADBD-CACF01D1FD58}</Project>
       <Name>Mythic.Package.Spy</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
