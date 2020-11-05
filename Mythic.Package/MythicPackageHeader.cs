@@ -27,7 +27,7 @@ namespace Mythic.Package
 		/// <summary>
 		/// Default start address.
 		/// </summary>
-		public static int DefaultStartAddress{ get{ return 0x200; } }
+		public static ulong DefaultStartAddress{ get{ return 0x200; } }
 		#endregion
 
 		#region DefaultBlockSize
@@ -64,12 +64,12 @@ namespace Mythic.Package
 		#endregion
 
 		#region StartAddress
-		private long m_StartAddress;
+		private ulong m_StartAddress;
 
 		/// <summary>
 		/// Start of the first <see cref="Mythic.Package.MythicPackageBlock"/>.
 		/// </summary>
-		public long StartAddress
+		public ulong StartAddress
 		{
 			get{ return m_StartAddress; }
 			set{ m_StartAddress = value; }
@@ -133,7 +133,7 @@ namespace Mythic.Package
 				throw new FormatException( "Unsupported version!" );
 
 			m_Misc = reader.ReadUInt32();
-			m_StartAddress = reader.ReadInt64();
+			m_StartAddress = reader.ReadUInt64();
 
 			m_BlockSize = reader.ReadInt32();
 			m_FileCount = reader.ReadInt32();
@@ -150,7 +150,7 @@ namespace Mythic.Package
 			writer.Write( (byte) 'M' );
 			writer.Write( (byte) 'Y' );
 			writer.Write( (byte) 'P' );
-			writer.Write( (byte) 0x0 );
+			writer.Write( (byte) 0 );
 
 			writer.Write( m_Version );
 			writer.Write( m_Misc );
@@ -158,7 +158,7 @@ namespace Mythic.Package
 			writer.Write( m_BlockSize );
 			writer.Write( m_FileCount );
 
-			for ( int i = 28; i < m_StartAddress; i++ )
+			while ( (ulong) writer.BaseStream.Position < m_StartAddress )
 				writer.Write( (byte) 0x0 );
 		}
 		#endregion

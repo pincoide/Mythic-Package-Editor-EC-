@@ -68,25 +68,25 @@ namespace Mythic.Package
 		#endregion
 
 		#region CompressedSize
-		private int m_CompressedSize;
+		private uint m_CompressedSize;
 
 		/// <summary>
 		/// Size of the compressed file. Equals to <see cref="Mythic.Package.MythicPackageFile.DecompressedSize"/> when
 		/// <see cref="Mythic.Package.MythicPackageFile.Compression"/> is set to <see cref="Mythic.Package.CompressionFlag.None"/>.
 		/// </summary>
-		public int CompressedSize
+		public uint CompressedSize
 		{
 			get{ return m_CompressedSize; }
 		}
 		#endregion
 
 		#region DecompressedSize
-		private int m_DecompressedSize;
+		private uint m_DecompressedSize;
 
 		/// <summary>
 		/// Size of the decompressed file.
 		/// </summary>
-		public int DecompressedSize
+		public uint DecompressedSize
 		{
 			get{ return m_DecompressedSize; }
 		}
@@ -200,8 +200,8 @@ namespace Mythic.Package
 
 			m_DataBlockAddress = m_OldDataBlockAddress = reader.ReadInt64();
 			m_DataBlockLength = reader.ReadInt32();
-			m_CompressedSize = reader.ReadInt32();
-			m_DecompressedSize = reader.ReadInt32();
+			m_CompressedSize = reader.ReadUInt32();
+			m_DecompressedSize = reader.ReadUInt32();
 			m_FileHash = reader.ReadUInt64();
 
 			if ( m_FileHash != 0 )
@@ -370,10 +370,10 @@ namespace Mythic.Package
 		/// Saves file header to <paramref name="writer"/>.
 		/// </summary>
 		/// <param name="writer">Binary file (.uop destination).</param>
-		public void Save( BinaryWriter writer )
+		public void Save( BinaryReader reader, BinaryWriter writer )
 		{
 			writer.Write( m_DataBlockAddress );
-			writer.Write( m_DataBlockLength );
+			writer.Write( 0 );
 			writer.Write( m_CompressedSize );
 			writer.Write( m_DecompressedSize );
 			writer.Write( m_FileHash );
@@ -390,14 +390,14 @@ namespace Mythic.Package
 		{
 			if ( m_SourceBuffer != null )
 			{
-				writer.Write( m_SourceBuffer, 0, m_CompressedSize );
+				writer.Write( m_SourceBuffer, 0, (int) m_CompressedSize );
 				HashDictionary.Set( m_FileHash, m_FileName );
 			}
 			else
 			{
-				reader.BaseStream.Seek( m_OldDataBlockAddress + m_DataBlockLength, SeekOrigin.Begin );
-				m_SourceBuffer = reader.ReadBytes( m_CompressedSize );
-				writer.Write( m_SourceBuffer, 0, m_CompressedSize );
+				reader.BaseStream.Seek( (long) m_OldDataBlockAddress + m_DataBlockLength, SeekOrigin.Begin );
+				m_SourceBuffer = reader.ReadBytes( (int) m_CompressedSize );
+				writer.Write( m_SourceBuffer, 0, (int) m_CompressedSize );
 			}
 
 			m_OldDataBlockAddress = m_DataBlockAddress;
@@ -413,54 +413,72 @@ namespace Mythic.Package
 		/// <see cref="Mythic.Package.MythicPackageFile.CompressedSize"/> and <see cref="Mythic.Package.MythicPackageFile.DecompressedSize"/>.
 		/// </summary>
 		/// <param name="pointer">Address of <see cref="Mythic.Package.MythicPackageFile.DataBlockAddress"/>.</param>
-		public void UpdateOffsets( ref long pointer )
+		public void UpdateOffsets( ref ulong pointer )
 		{
-			m_DataBlockAddress = pointer;
-			m_DataBlockLength = 0; // Custom .uop files don't need data header.
+			// current file data address
+			m_DataBlockAddress = (long) pointer;
 
+			// is this a new/modified file?
 			if ( m_Added || m_Modified )
 			{
+				// is the new file still available?
 				if ( !File.Exists( m_SourceFileName ) )
 					throw new FileNotFoundException();
 
-				FileInfo info = new FileInfo( m_SourceFileName );
+				// load the new file data
+				byte[] sourceBuffer = File.ReadAllBytes(m_SourceFileName);
 
-				m_CompressedSize = (int) info.Length;
-				m_DecompressedSize = (int) info.Length;
+				// get the new file size
+				m_CompressedSize = (uint) sourceBuffer.Length;
+				m_DecompressedSize = (uint) sourceBuffer.Length;
 
-				byte[] sourceBuffer;
-
-				using ( BinaryReader reader = new BinaryReader( info.OpenRead() ) )
-				{
-					sourceBuffer = reader.ReadBytes( m_DecompressedSize );
-				}
-
+				// if the file is less than 4 bytes, we can't compress it.
 				if ( sourceBuffer.Length < 4 )
 					m_Compression = CompressionFlag.None;
 
-				switch ( m_Compression )
-				{
-					case CompressionFlag.Zlib:
-					{
-						m_SourceBuffer = new byte[ m_CompressedSize ];
-						ZLibError error = Zlib.Compress( m_SourceBuffer, ref m_CompressedSize, sourceBuffer, m_DecompressedSize, ZLibQuality.Speed );
+                // check what compression type we need to use
+                switch ( m_Compression )
+                {
+                    case CompressionFlag.Zlib:
+                        {
+							// initialize the compressed data array
+                            m_SourceBuffer = new byte[m_CompressedSize];
 
-						if ( error != ZLibError.Okay )
-							throw new CompressionException( error );
+							// initialize the compressed data size
+                            int csize = (int) m_CompressedSize;
 
-						break;
-					}
-					case CompressionFlag.None:
-					{
-						m_SourceBuffer = sourceBuffer;
-						break;
-					}
-				}
+							// compress the file
+                            ZLibError error = Zlib.Compress( m_SourceBuffer, ref csize, sourceBuffer, (int) m_DecompressedSize, ZLibQuality.Best );
+
+							// update the compressed data size
+                            m_CompressedSize = (uint) csize;
+
+							// did we get an error?
+                            if ( error != ZLibError.Okay )
+                                throw new CompressionException( error );
+
+                            break;
+                        }
+                    case CompressionFlag.None:
+                        {
+							// if there is no compression, we save the file as it is...
+                            m_SourceBuffer = sourceBuffer;
+
+                            break;
+                        }
+                }
+
+				// update the data block hash
+                m_DataBlockHash = HashDictionary.HashDataBlock( m_SourceBuffer );
+
+				// make sure the lenght is 0
+				m_DataBlockLength = 0;
 			}
-			else
-				m_SourceBuffer = null;
+			//else
+			//	m_SourceBuffer = null;
 
-			pointer += m_DataBlockLength + m_CompressedSize;
+			// increase the address for the next size to be placed AFTER this one.
+			pointer += m_CompressedSize;
 		}
 		#endregion
 
@@ -509,7 +527,7 @@ namespace Mythic.Package
 					byte[] data = Unpack( source );
 
 					if ( data != null )
-						writer.Write( data, 0, m_DecompressedSize );
+						writer.Write( data, 0, (int) m_DecompressedSize );
 				}
 			}
 		}
@@ -535,11 +553,11 @@ namespace Mythic.Package
 		/// <returns>Binary data from this file.</returns>
 		public byte[] Unpack( BinaryReader source )
 		{
-			source.BaseStream.Seek( m_DataBlockAddress + m_DataBlockLength, SeekOrigin.Begin );
+			source.BaseStream.Seek( (long) m_DataBlockAddress + m_DataBlockLength, SeekOrigin.Begin );
 
 			byte[] sourceData = new byte[ m_CompressedSize ];
 
-			if ( source.Read( sourceData, 0, m_CompressedSize ) != m_CompressedSize )
+			if ( source.Read( sourceData, 0, (int) m_CompressedSize ) != m_CompressedSize )
 				throw new StreamSourceException();
 
 			switch ( m_Compression )
@@ -547,8 +565,8 @@ namespace Mythic.Package
 				case CompressionFlag.Zlib:
 					{
 						byte[] destData = new byte[ m_DecompressedSize ];
-						int destLength = m_DecompressedSize;
-						ZLibError error = Zlib.Decompress( destData, ref destLength, sourceData, m_CompressedSize );
+						int destLength = (int) m_DecompressedSize;
+						ZLibError error = Zlib.Decompress( destData, ref destLength, sourceData, (int) m_CompressedSize );
 
 						if ( error != ZLibError.Okay )
 							throw new CompressionException( error );

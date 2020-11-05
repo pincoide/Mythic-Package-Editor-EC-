@@ -157,21 +157,12 @@ namespace Mythic.Package
 		/// <param name="parent">Parent package.</param>
 		/// <param name="filesToLoad">Amount of files to load (default = block size)</param>
 		/// <param name="noHeader">Do we have to load the block header?</param>
-		public MythicPackageBlock( BinaryReader reader, MythicPackage parent, int filesToLoad = 0, bool noHeader = false )
+		public MythicPackageBlock( BinaryReader reader, MythicPackage parent )
 		{
 			m_Parent = parent;
 
-			m_FileCount = 0;
-			m_NextBlock = 0;
-
-			if ( !noHeader )
-            {
-				m_FileCount = reader.ReadInt32();
-				m_NextBlock = reader.ReadInt64();
-			}
-
-			if ( filesToLoad == 0 )
-				filesToLoad = parent.Header.BlockSize;
+			m_FileCount = reader.ReadInt32();
+			m_NextBlock = reader.ReadInt64();
 
 			MythicPackageFile file;
 			int index = 0;
@@ -183,10 +174,8 @@ namespace Mythic.Package
 
 				if ( file.DataBlockAddress != 0 )
 					m_Files.Add( file );
-
-				UpdateProgress( parent.Blocks.Count * parent.Header.BlockSize + index, parent.Header.FileCount );
 			}
-			while ( index < filesToLoad );
+			while ( index < m_FileCount );
 		}
 		#endregion
 
@@ -328,19 +317,19 @@ namespace Mythic.Package
 		/// <param name="writer">Binary file (.uop destination).</param>
 		public void Save( BinaryReader reader, BinaryWriter writer )
 		{
-			writer.Write( m_FileCount );
+			writer.Write( m_Files.Count );
 			writer.Write( m_NextBlock );
 
 			for ( int i = 0; i < m_Files.Count; i++ )
 			{
-				m_Files[ i ].Save( writer );
+				m_Files[ i ].Save( reader, writer );
 			}
 
-			byte[] empty = new byte[ MythicPackageFile.Size * ( m_FileCount ) ];
-			Array.Clear( empty, 0, empty.Length );
-			writer.Write( empty );
+            //byte[] empty = new byte[ MythicPackageFile.Size * m_Files.Count ];
+            //Array.Clear( empty, 0, empty.Length );
+            //writer.Write( empty );
 
-			for ( int i = 0; i < m_Files.Count; i++ )
+            for ( int i = 0; i < m_Files.Count; i++ )
 			{
 				m_Files[ i ].SaveData( reader, writer );
 
@@ -358,9 +347,9 @@ namespace Mythic.Package
 		/// Updates <see cref="Mythic.Package.MythicPackageFile.DataBlockAddress"/> of all files within this block.
 		/// </summary>
 		/// <param name="pointer">Address of this block.</param>
-		public void UpdateOffsets( ref long pointer )
+		public void UpdateOffsets( ref ulong pointer )
 		{
-			pointer += MythicPackageBlock.Size + m_Parent.Header.BlockSize * MythicPackageFile.Size;
+			pointer += (ulong)( MythicPackageBlock.Size + ( m_Files.Count * MythicPackageFile.Size ) );
 
 			for ( int i = 0; i < m_Files.Count; i++ )
 			{
@@ -371,7 +360,7 @@ namespace Mythic.Package
 			}
 
 			if ( m_Index < m_Parent.Blocks.Count - 1 )
-				m_NextBlock = pointer;
+				m_NextBlock = (long) pointer;
 			else
 				m_NextBlock = 0;
 		}
