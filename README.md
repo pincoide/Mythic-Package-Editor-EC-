@@ -9,5 +9,6 @@ The next objective is:
 I've added a button to parse the file names inside a folder (and sub-folder) to the ones inside the uop, but it doesn't seem to be effective...
 For some reason some file names are not recognized (even if you know exactly its name).
 
+- Clean the code and comment properly.
 
 If you have any idea on how to fix/improve the tool, feel free to contact me on discord: Pinco#5969
