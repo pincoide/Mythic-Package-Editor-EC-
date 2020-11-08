@@ -58,6 +58,7 @@
             this.Status = new System.Windows.Forms.StatusStrip();
             this.StatusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnMessageIcon = new System.Windows.Forms.ToolStripDropDownButton();
             this.Worker = new System.ComponentModel.BackgroundWorker();
             this.CopyMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CopyMenuStripButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,6 +91,8 @@
             this.BlockFileCountInfo = new System.Windows.Forms.Label();
             this.BlockFileCountLabel = new System.Windows.Forms.Label();
             this.DetailsFile = new System.Windows.Forms.TabPage();
+            this.FileMimeLabel = new System.Windows.Forms.Label();
+            this.FileMimeInfo = new System.Windows.Forms.Label();
             this.FileUnsetButton = new System.Windows.Forms.Button();
             this.FileCompressionTypeInfo = new System.Windows.Forms.Label();
             this.FileCompressionTypeLabel = new System.Windows.Forms.Label();
@@ -137,11 +140,16 @@
             this.ButtonRemove = new System.Windows.Forms.ToolStripButton();
             this.ButtonUnpack = new System.Windows.Forms.ToolStripButton();
             this.ButtonReplace = new System.Windows.Forms.ToolStripButton();
+            this.ButtonReplaceFolder = new System.Windows.Forms.ToolStripButton();
             this.ErrorTooltip = new System.Windows.Forms.ToolTip(this.components);
             this.Help = new System.Windows.Forms.HelpProvider();
+            this.btnStopSearch = new System.Windows.Forms.Button();
+            this.btnBrute = new System.Windows.Forms.Button();
+            this.FolderFiles = new System.Windows.Forms.Button();
             this.SearchHash = new System.Windows.Forms.Button();
             this.Search = new System.Windows.Forms.Button();
-            this.FolderFiles = new System.Windows.Forms.Button();
+            this.txtLeadZeroes = new System.Windows.Forms.NumericUpDown();
+            this.ttpButtons = new System.Windows.Forms.ToolTip(this.components);
             this.MainMenu.SuspendLayout();
             this.Status.SuspendLayout();
             this.CopyMenuStrip.SuspendLayout();
@@ -150,6 +158,7 @@
             this.DetailsBlock.SuspendLayout();
             this.DetailsFile.SuspendLayout();
             this.MenuToolStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtLeadZeroes)).BeginInit();
             this.SuspendLayout();
             // 
             // MainMenu
@@ -185,7 +194,7 @@
             this.MainMenuFileNew.Image = global::Mythic.Package.Editor.Properties.Resources.New;
             this.MainMenuFileNew.Name = "MainMenuFileNew";
             this.MainMenuFileNew.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.MainMenuFileNew.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuFileNew.Size = new System.Drawing.Size(154, 22);
             this.MainMenuFileNew.Text = "New";
             this.MainMenuFileNew.Click += new System.EventHandler(this.MainMenuFileNew_Click);
             // 
@@ -195,7 +204,7 @@
             this.MainMenuFileOpen.Image = global::Mythic.Package.Editor.Properties.Resources.Folder;
             this.MainMenuFileOpen.Name = "MainMenuFileOpen";
             this.MainMenuFileOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.MainMenuFileOpen.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuFileOpen.Size = new System.Drawing.Size(154, 22);
             this.MainMenuFileOpen.Text = "Open";
             this.MainMenuFileOpen.Click += new System.EventHandler(this.MainMenuFileOpen_Click);
             // 
@@ -205,7 +214,7 @@
             this.MainMenuFileSave.Image = ((System.Drawing.Image)(resources.GetObject("MainMenuFileSave.Image")));
             this.MainMenuFileSave.Name = "MainMenuFileSave";
             this.MainMenuFileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.MainMenuFileSave.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuFileSave.Size = new System.Drawing.Size(154, 22);
             this.MainMenuFileSave.Text = "Save";
             this.MainMenuFileSave.Click += new System.EventHandler(this.MainMenuFileSave_Click);
             // 
@@ -215,7 +224,7 @@
             this.MainMenuFileClose.Image = ((System.Drawing.Image)(resources.GetObject("MainMenuFileClose.Image")));
             this.MainMenuFileClose.Name = "MainMenuFileClose";
             this.MainMenuFileClose.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.MainMenuFileClose.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuFileClose.Size = new System.Drawing.Size(154, 22);
             this.MainMenuFileClose.Text = "Close";
             this.MainMenuFileClose.Click += new System.EventHandler(this.MainMenuFileClose_Click);
             // 
@@ -223,13 +232,13 @@
             // 
             this.MainMenuFileSeparator.ForeColor = System.Drawing.Color.Black;
             this.MainMenuFileSeparator.Name = "MainMenuFileSeparator";
-            this.MainMenuFileSeparator.Size = new System.Drawing.Size(177, 6);
+            this.MainMenuFileSeparator.Size = new System.Drawing.Size(151, 6);
             // 
             // MainMenuFileExit
             // 
             this.MainMenuFileExit.ForeColor = System.Drawing.Color.Black;
             this.MainMenuFileExit.Name = "MainMenuFileExit";
-            this.MainMenuFileExit.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuFileExit.Size = new System.Drawing.Size(154, 22);
             this.MainMenuFileExit.Text = "Exit";
             this.MainMenuFileExit.Click += new System.EventHandler(this.MainMenuFileExit_Click);
             // 
@@ -247,7 +256,7 @@
             this.MainMenuEditSettings.ForeColor = System.Drawing.Color.Black;
             this.MainMenuEditSettings.Image = global::Mythic.Package.Editor.Properties.Resources.Wrench;
             this.MainMenuEditSettings.Name = "MainMenuEditSettings";
-            this.MainMenuEditSettings.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuEditSettings.Size = new System.Drawing.Size(116, 22);
             this.MainMenuEditSettings.Text = "Settings";
             this.MainMenuEditSettings.Click += new System.EventHandler(this.MainMenuEditSettings_Click);
             // 
@@ -269,7 +278,7 @@
             this.MainMenuDictionaryLoad.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionaryLoad.Image = global::Mythic.Package.Editor.Properties.Resources.Folder;
             this.MainMenuDictionaryLoad.Name = "MainMenuDictionaryLoad";
-            this.MainMenuDictionaryLoad.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuDictionaryLoad.Size = new System.Drawing.Size(112, 22);
             this.MainMenuDictionaryLoad.Text = "Load";
             this.MainMenuDictionaryLoad.Click += new System.EventHandler(this.MainMenuDictionaryLoad_Click);
             // 
@@ -278,7 +287,7 @@
             this.MainMenuDictionarySave.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionarySave.Image = ((System.Drawing.Image)(resources.GetObject("MainMenuDictionarySave.Image")));
             this.MainMenuDictionarySave.Name = "MainMenuDictionarySave";
-            this.MainMenuDictionarySave.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuDictionarySave.Size = new System.Drawing.Size(112, 22);
             this.MainMenuDictionarySave.Text = "Save";
             this.MainMenuDictionarySave.Click += new System.EventHandler(this.MainMenuDictionarySave_Click);
             // 
@@ -287,7 +296,7 @@
             this.MainMenuDictionaryMerge.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionaryMerge.Image = ((System.Drawing.Image)(resources.GetObject("MainMenuDictionaryMerge.Image")));
             this.MainMenuDictionaryMerge.Name = "MainMenuDictionaryMerge";
-            this.MainMenuDictionaryMerge.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuDictionaryMerge.Size = new System.Drawing.Size(112, 22);
             this.MainMenuDictionaryMerge.Text = "Merge";
             this.MainMenuDictionaryMerge.Click += new System.EventHandler(this.MainMenuDictionaryMerge_Click);
             // 
@@ -295,7 +304,7 @@
             // 
             this.MainMenuDictionarySeparator.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionarySeparator.Name = "MainMenuDictionarySeparator";
-            this.MainMenuDictionarySeparator.Size = new System.Drawing.Size(177, 6);
+            this.MainMenuDictionarySeparator.Size = new System.Drawing.Size(109, 6);
             // 
             // MainMenuDictionaryUpdate
             // 
@@ -306,14 +315,14 @@
             this.MainMenuDictionaryUpdate.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionaryUpdate.Image = global::Mythic.Package.Editor.Properties.Resources.Eye;
             this.MainMenuDictionaryUpdate.Name = "MainMenuDictionaryUpdate";
-            this.MainMenuDictionaryUpdate.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuDictionaryUpdate.Size = new System.Drawing.Size(112, 22);
             this.MainMenuDictionaryUpdate.Text = "Update";
             // 
             // MainMenuDictionarySpyStart
             // 
             this.MainMenuDictionarySpyStart.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionarySpyStart.Name = "MainMenuDictionarySpyStart";
-            this.MainMenuDictionarySpyStart.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuDictionarySpyStart.Size = new System.Drawing.Size(131, 22);
             this.MainMenuDictionarySpyStart.Text = "Spy Start";
             this.MainMenuDictionarySpyStart.Click += new System.EventHandler(this.MainMenuSpyStart_Click);
             // 
@@ -321,7 +330,7 @@
             // 
             this.MainMenuDictionarySpyAttach.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionarySpyAttach.Name = "MainMenuDictionarySpyAttach";
-            this.MainMenuDictionarySpyAttach.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuDictionarySpyAttach.Size = new System.Drawing.Size(131, 22);
             this.MainMenuDictionarySpyAttach.Text = "Spy Attach";
             this.MainMenuDictionarySpyAttach.Click += new System.EventHandler(this.MainMenuSpyAttach_Click);
             // 
@@ -330,7 +339,7 @@
             this.MainMenuDictionarySpyDetach.Enabled = false;
             this.MainMenuDictionarySpyDetach.ForeColor = System.Drawing.Color.Black;
             this.MainMenuDictionarySpyDetach.Name = "MainMenuDictionarySpyDetach";
-            this.MainMenuDictionarySpyDetach.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuDictionarySpyDetach.Size = new System.Drawing.Size(131, 22);
             this.MainMenuDictionarySpyDetach.Text = "Detach";
             this.MainMenuDictionarySpyDetach.Click += new System.EventHandler(this.MainMenuSpyDetach_Click);
             // 
@@ -348,7 +357,7 @@
             // 
             this.MainMenuHelpContent.ForeColor = System.Drawing.Color.Black;
             this.MainMenuHelpContent.Name = "MainMenuHelpContent";
-            this.MainMenuHelpContent.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuHelpContent.Size = new System.Drawing.Size(117, 22);
             this.MainMenuHelpContent.Text = "Content";
             this.MainMenuHelpContent.Click += new System.EventHandler(this.MainMenuHelpContent_Click);
             // 
@@ -357,7 +366,7 @@
             this.MainMenuHelpAbout.ForeColor = System.Drawing.Color.Black;
             this.MainMenuHelpAbout.Image = global::Mythic.Package.Editor.Properties.Resources.Information;
             this.MainMenuHelpAbout.Name = "MainMenuHelpAbout";
-            this.MainMenuHelpAbout.Size = new System.Drawing.Size(180, 22);
+            this.MainMenuHelpAbout.Size = new System.Drawing.Size(117, 22);
             this.MainMenuHelpAbout.Text = "About";
             this.MainMenuHelpAbout.Click += new System.EventHandler(this.MainMenuHelpAbout_Click);
             // 
@@ -391,7 +400,8 @@
             // 
             this.Status.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusProgressBar,
-            this.StatusLabel});
+            this.StatusLabel,
+            this.btnMessageIcon});
             this.Status.Location = new System.Drawing.Point(0, 463);
             this.Status.Name = "Status";
             this.Status.Size = new System.Drawing.Size(794, 22);
@@ -410,6 +420,15 @@
             this.StatusLabel.Margin = new System.Windows.Forms.Padding(5, 3, 0, 2);
             this.StatusLabel.Name = "StatusLabel";
             this.StatusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // btnMessageIcon
+            // 
+            this.btnMessageIcon.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnMessageIcon.Image = global::Mythic.Package.Editor.Properties.Resources.Information;
+            this.btnMessageIcon.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMessageIcon.Name = "btnMessageIcon";
+            this.btnMessageIcon.Size = new System.Drawing.Size(29, 20);
+            this.btnMessageIcon.Text = "toolStripDropDownButton1";
             // 
             // Worker
             // 
@@ -445,7 +464,7 @@
             this.FileDetails.Name = "FileDetails";
             this.FileDetails.Padding = new System.Drawing.Point(10, 3);
             this.FileDetails.SelectedIndex = 0;
-            this.FileDetails.Size = new System.Drawing.Size(408, 379);
+            this.FileDetails.Size = new System.Drawing.Size(408, 356);
             this.FileDetails.TabIndex = 8;
             // 
             // DetailsPackage
@@ -474,7 +493,7 @@
             this.DetailsPackage.Location = new System.Drawing.Point(4, 22);
             this.DetailsPackage.Name = "DetailsPackage";
             this.DetailsPackage.Padding = new System.Windows.Forms.Padding(3);
-            this.DetailsPackage.Size = new System.Drawing.Size(400, 353);
+            this.DetailsPackage.Size = new System.Drawing.Size(400, 330);
             this.DetailsPackage.TabIndex = 0;
             this.DetailsPackage.Text = "Package Details";
             // 
@@ -693,7 +712,7 @@
             this.DetailsBlock.Location = new System.Drawing.Point(4, 22);
             this.DetailsBlock.Name = "DetailsBlock";
             this.DetailsBlock.Padding = new System.Windows.Forms.Padding(3);
-            this.DetailsBlock.Size = new System.Drawing.Size(400, 353);
+            this.DetailsBlock.Size = new System.Drawing.Size(400, 330);
             this.DetailsBlock.TabIndex = 1;
             this.DetailsBlock.Text = "Block Details";
             // 
@@ -751,6 +770,8 @@
             // DetailsFile
             // 
             this.DetailsFile.BackColor = System.Drawing.SystemColors.Control;
+            this.DetailsFile.Controls.Add(this.FileMimeLabel);
+            this.DetailsFile.Controls.Add(this.FileMimeInfo);
             this.DetailsFile.Controls.Add(this.FileUnsetButton);
             this.DetailsFile.Controls.Add(this.FileCompressionTypeInfo);
             this.DetailsFile.Controls.Add(this.FileCompressionTypeLabel);
@@ -769,9 +790,29 @@
             this.DetailsFile.Location = new System.Drawing.Point(4, 22);
             this.DetailsFile.Name = "DetailsFile";
             this.DetailsFile.Padding = new System.Windows.Forms.Padding(3);
-            this.DetailsFile.Size = new System.Drawing.Size(400, 353);
+            this.DetailsFile.Size = new System.Drawing.Size(400, 330);
             this.DetailsFile.TabIndex = 2;
             this.DetailsFile.Text = "File Details";
+            // 
+            // FileMimeLabel
+            // 
+            this.FileMimeLabel.Location = new System.Drawing.Point(20, 95);
+            this.FileMimeLabel.Name = "FileMimeLabel";
+            this.FileMimeLabel.Size = new System.Drawing.Size(88, 13);
+            this.FileMimeLabel.TabIndex = 26;
+            this.FileMimeLabel.Text = "Mime Type:";
+            this.FileMimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // FileMimeInfo
+            // 
+            this.FileMimeInfo.BackColor = System.Drawing.Color.White;
+            this.FileMimeInfo.Location = new System.Drawing.Point(114, 95);
+            this.FileMimeInfo.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
+            this.FileMimeInfo.Name = "FileMimeInfo";
+            this.FileMimeInfo.Size = new System.Drawing.Size(280, 26);
+            this.FileMimeInfo.TabIndex = 27;
+            this.FileMimeInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.FileMimeInfo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Label_MouseClick);
             // 
             // FileUnsetButton
             // 
@@ -787,7 +828,7 @@
             // FileCompressionTypeInfo
             // 
             this.FileCompressionTypeInfo.BackColor = System.Drawing.Color.White;
-            this.FileCompressionTypeInfo.Location = new System.Drawing.Point(151, 117);
+            this.FileCompressionTypeInfo.Location = new System.Drawing.Point(151, 143);
             this.FileCompressionTypeInfo.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.FileCompressionTypeInfo.Name = "FileCompressionTypeInfo";
             this.FileCompressionTypeInfo.Size = new System.Drawing.Size(83, 13);
@@ -796,7 +837,7 @@
             // 
             // FileCompressionTypeLabel
             // 
-            this.FileCompressionTypeLabel.Location = new System.Drawing.Point(3, 117);
+            this.FileCompressionTypeLabel.Location = new System.Drawing.Point(3, 143);
             this.FileCompressionTypeLabel.Name = "FileCompressionTypeLabel";
             this.FileCompressionTypeLabel.Size = new System.Drawing.Size(142, 13);
             this.FileCompressionTypeLabel.TabIndex = 24;
@@ -807,7 +848,7 @@
             // 
             this.FileCompression.AutoSize = true;
             this.FileCompression.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FileCompression.Location = new System.Drawing.Point(6, 100);
+            this.FileCompression.Location = new System.Drawing.Point(6, 126);
             this.FileCompression.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
             this.FileCompression.Name = "FileCompression";
             this.FileCompression.Size = new System.Drawing.Size(78, 13);
@@ -828,7 +869,7 @@
             // FileDecompressedInfo
             // 
             this.FileDecompressedInfo.BackColor = System.Drawing.Color.White;
-            this.FileDecompressedInfo.Location = new System.Drawing.Point(151, 153);
+            this.FileDecompressedInfo.Location = new System.Drawing.Point(151, 179);
             this.FileDecompressedInfo.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.FileDecompressedInfo.Name = "FileDecompressedInfo";
             this.FileDecompressedInfo.Size = new System.Drawing.Size(83, 13);
@@ -850,7 +891,7 @@
             // 
             // FileDecompressedLabel
             // 
-            this.FileDecompressedLabel.Location = new System.Drawing.Point(3, 153);
+            this.FileDecompressedLabel.Location = new System.Drawing.Point(3, 179);
             this.FileDecompressedLabel.Margin = new System.Windows.Forms.Padding(10, 5, 3, 0);
             this.FileDecompressedLabel.Name = "FileDecompressedLabel";
             this.FileDecompressedLabel.Size = new System.Drawing.Size(142, 13);
@@ -871,7 +912,7 @@
             // FileCompressedInfo
             // 
             this.FileCompressedInfo.BackColor = System.Drawing.Color.White;
-            this.FileCompressedInfo.Location = new System.Drawing.Point(151, 135);
+            this.FileCompressedInfo.Location = new System.Drawing.Point(151, 161);
             this.FileCompressedInfo.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.FileCompressedInfo.Name = "FileCompressedInfo";
             this.FileCompressedInfo.Size = new System.Drawing.Size(83, 13);
@@ -891,7 +932,7 @@
             // 
             // FileCompressedLabel
             // 
-            this.FileCompressedLabel.Location = new System.Drawing.Point(3, 135);
+            this.FileCompressedLabel.Location = new System.Drawing.Point(3, 161);
             this.FileCompressedLabel.Margin = new System.Windows.Forms.Padding(10, 5, 3, 0);
             this.FileCompressedLabel.Name = "FileCompressedLabel";
             this.FileCompressedLabel.Size = new System.Drawing.Size(142, 13);
@@ -1072,10 +1113,10 @@
             // SearchBox
             // 
             this.SearchBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SearchBox.Location = new System.Drawing.Point(575, 439);
+            this.SearchBox.Location = new System.Drawing.Point(374, 439);
             this.SearchBox.MaxLength = 256;
             this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(207, 20);
+            this.SearchBox.Size = new System.Drawing.Size(408, 20);
             this.SearchBox.TabIndex = 9;
             this.SearchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchBox_KeyPress);
             // 
@@ -1100,7 +1141,8 @@
             this.ButtonAddFolder,
             this.ButtonRemove,
             this.ButtonUnpack,
-            this.ButtonReplace});
+            this.ButtonReplace,
+            this.ButtonReplaceFolder});
             this.MenuToolStrip.Location = new System.Drawing.Point(0, 24);
             this.MenuToolStrip.Name = "MenuToolStrip";
             this.MenuToolStrip.Size = new System.Drawing.Size(794, 25);
@@ -1224,6 +1266,15 @@
             this.ButtonReplace.Size = new System.Drawing.Size(23, 22);
             this.ButtonReplace.Click += new System.EventHandler(this.ButtonReplace_Click);
             // 
+            // ButtonReplaceFolder
+            // 
+            this.ButtonReplaceFolder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ButtonReplaceFolder.Image = global::Mythic.Package.Editor.Properties.Resources.Replacefolder_fw;
+            this.ButtonReplaceFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ButtonReplaceFolder.Name = "ButtonReplaceFolder";
+            this.ButtonReplaceFolder.Size = new System.Drawing.Size(23, 22);
+            this.ButtonReplaceFolder.Click += new System.EventHandler(this.ButtonReplaceFolder_Click);
+            // 
             // ErrorTooltip
             // 
             this.ErrorTooltip.IsBalloon = true;
@@ -1234,16 +1285,60 @@
             this.Help.HelpNamespace = "C:\\Documents and Settings\\Administrator\\My Documents\\Visual Studio 2008\\Projects\\" +
     "Mythic\\Mythic.Package.Editor\\Help.chm";
             // 
+            // btnStopSearch
+            // 
+            this.btnStopSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStopSearch.Enabled = false;
+            this.btnStopSearch.Image = global::Mythic.Package.Editor.Properties.Resources.Remove;
+            this.btnStopSearch.Location = new System.Drawing.Point(749, 410);
+            this.btnStopSearch.Name = "btnStopSearch";
+            this.btnStopSearch.Size = new System.Drawing.Size(33, 23);
+            this.btnStopSearch.TabIndex = 16;
+            this.btnStopSearch.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ttpButtons.SetToolTip(this.btnStopSearch, "Stop the current search.");
+            this.btnStopSearch.UseVisualStyleBackColor = true;
+            this.btnStopSearch.Click += new System.EventHandler(this.btnStopSearch_Click);
+            // 
+            // btnBrute
+            // 
+            this.btnBrute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrute.Image = global::Mythic.Package.Editor.Properties.Resources.Wrench;
+            this.btnBrute.Location = new System.Drawing.Point(571, 410);
+            this.btnBrute.Name = "btnBrute";
+            this.btnBrute.Size = new System.Drawing.Size(65, 23);
+            this.btnBrute.TabIndex = 15;
+            this.btnBrute.Text = "Brute";
+            this.btnBrute.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ttpButtons.SetToolTip(this.btnBrute, "Brute force search for numeric file names with N leading zeroes (specified next t" +
+        "o this button).");
+            this.btnBrute.UseVisualStyleBackColor = true;
+            this.btnBrute.Click += new System.EventHandler(this.btnBrute_Click);
+            // 
+            // FolderFiles
+            // 
+            this.FolderFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.FolderFiles.Image = global::Mythic.Package.Editor.Properties.Resources.Folder;
+            this.FolderFiles.Location = new System.Drawing.Point(504, 410);
+            this.FolderFiles.Name = "FolderFiles";
+            this.FolderFiles.Size = new System.Drawing.Size(65, 23);
+            this.FolderFiles.TabIndex = 14;
+            this.FolderFiles.Text = "Folder";
+            this.FolderFiles.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ttpButtons.SetToolTip(this.FolderFiles, "Search for all the files contained inside the selected folder.");
+            this.FolderFiles.UseVisualStyleBackColor = true;
+            this.FolderFiles.Click += new System.EventHandler(this.FolderFiles_Click);
+            // 
             // SearchHash
             // 
             this.SearchHash.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.SearchHash.Image = global::Mythic.Package.Editor.Properties.Resources.SearchExpression;
-            this.SearchHash.Location = new System.Drawing.Point(374, 437);
+            this.SearchHash.Location = new System.Drawing.Point(374, 410);
             this.SearchHash.Name = "SearchHash";
             this.SearchHash.Size = new System.Drawing.Size(61, 23);
             this.SearchHash.TabIndex = 13;
             this.SearchHash.Text = "Hash";
             this.SearchHash.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ttpButtons.SetToolTip(this.SearchHash, "Search specific hash");
             this.SearchHash.UseVisualStyleBackColor = true;
             this.SearchHash.Click += new System.EventHandler(this.SearchHash_Click);
             // 
@@ -1251,33 +1346,37 @@
             // 
             this.Search.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Search.Image = ((System.Drawing.Image)(resources.GetObject("Search.Image")));
-            this.Search.Location = new System.Drawing.Point(437, 437);
+            this.Search.Location = new System.Drawing.Point(437, 410);
             this.Search.Name = "Search";
             this.Search.Size = new System.Drawing.Size(65, 23);
             this.Search.TabIndex = 7;
             this.Search.Text = "Search";
             this.Search.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ttpButtons.SetToolTip(this.Search, "Search for a specific file name.");
             this.Search.UseVisualStyleBackColor = true;
             this.Search.Click += new System.EventHandler(this.Search_Click);
             // 
-            // FolderFiles
+            // txtLeadZeroes
             // 
-            this.FolderFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.FolderFiles.Image = global::Mythic.Package.Editor.Properties.Resources.Folder;
-            this.FolderFiles.Location = new System.Drawing.Point(504, 437);
-            this.FolderFiles.Name = "FolderFiles";
-            this.FolderFiles.Size = new System.Drawing.Size(65, 23);
-            this.FolderFiles.TabIndex = 14;
-            this.FolderFiles.Text = "Folder";
-            this.FolderFiles.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.FolderFiles.UseVisualStyleBackColor = true;
-            this.FolderFiles.Click += new System.EventHandler(this.FolderFiles_Click);
+            this.txtLeadZeroes.Location = new System.Drawing.Point(705, 413);
+            this.txtLeadZeroes.Name = "txtLeadZeroes";
+            this.txtLeadZeroes.Size = new System.Drawing.Size(38, 20);
+            this.txtLeadZeroes.TabIndex = 17;
+            this.ttpButtons.SetToolTip(this.txtLeadZeroes, "Number of LEADING zeroes to use in the brute force search for the file names.");
+            this.txtLeadZeroes.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(794, 485);
+            this.Controls.Add(this.txtLeadZeroes);
+            this.Controls.Add(this.btnStopSearch);
+            this.Controls.Add(this.btnBrute);
             this.Controls.Add(this.FolderFiles);
             this.Controls.Add(this.MenuToolStrip);
             this.Controls.Add(this.SearchHash);
@@ -1311,6 +1410,7 @@
             this.DetailsFile.PerformLayout();
             this.MenuToolStrip.ResumeLayout(false);
             this.MenuToolStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtLeadZeroes)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1409,7 +1509,8 @@
 		private System.Windows.Forms.ToolStripProgressBar StatusProgressBar;
 		private Mythic.Package.Editor.SelectProcess SelectProcess;
 		private Mythic.Package.Editor.AddFile AddFile;
-		private Mythic.Package.Editor.AddFolder AddFolder;
+		private Mythic.Package.Editor.FolderSearch FolderSearch;
+        private Mythic.Package.Editor.AddFolder AddFolder;
 		private Mythic.Package.Editor.About About;
 		private Mythic.Package.Editor.SettingsDialog Settings;
 		private System.Windows.Forms.ToolStrip MenuToolStrip;
@@ -1435,6 +1536,14 @@
 		private System.Windows.Forms.Button FileUnsetButton;
 		private System.Windows.Forms.ToolStripButton ButtonAddFolder;
         private System.Windows.Forms.Button FolderFiles;
+        private System.Windows.Forms.Button btnBrute;
+        private System.Windows.Forms.Button btnStopSearch;
+        private System.Windows.Forms.ToolStripButton ButtonReplaceFolder;
+        private System.Windows.Forms.NumericUpDown txtLeadZeroes;
+        private System.Windows.Forms.ToolTip ttpButtons;
+        private System.Windows.Forms.ToolStripDropDownButton btnMessageIcon;
+        private System.Windows.Forms.Label FileMimeLabel;
+        private System.Windows.Forms.Label FileMimeInfo;
     }
 }
 

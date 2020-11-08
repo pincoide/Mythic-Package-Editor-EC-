@@ -17,7 +17,7 @@ namespace Mythic.Package.Editor
 	{
 		#region Constants
 		public static string FileName{ get{ return "Settings.xml"; } }
-		
+
 		private static string NodeRoot = "Settings";
 		private static string NodeSetting = "Setting";
 		private static string NodeName = "Name";
@@ -91,7 +91,7 @@ namespace Mythic.Package.Editor
 		{
 			get
 			{
-				return GetValue( SettingInnerDirectory, "Data/WorldArt/" );
+				return GetValue( SettingInnerDirectory, "data/worldart/" );
 			}
 			set
 			{
@@ -143,7 +143,7 @@ namespace Mythic.Package.Editor
 			foreach ( XmlNode node in list )
 			{
 				element = node[ NodeName ];
-				
+
 				if ( element != null )
 					name = element.InnerText;
 
@@ -151,7 +151,7 @@ namespace Mythic.Package.Editor
 					continue;
 
 				element = node[ NodeValue ];
-				
+
 				if ( element != null )
 					value = element.InnerText;
 
@@ -205,16 +205,21 @@ namespace Mythic.Package.Editor
 			SettingEntry entry = null;
 
 			if ( m_Dictionary.TryGetValue( name, out entry ) )
-			{
 				entry.Value = value;
-			}
+
 			else
-			{
 				m_Dictionary.Add( name, new SettingEntry( value, new List<string>() ) );
-			}			
+		}
+
+		public void AddInnerDirectory( string dir )
+        {
+			SettingEntry entry = null;
+
+			if ( m_Dictionary.TryGetValue( SettingInnerDirectory, out entry ) )
+				entry.Options.Add( dir );
 		}
 		#endregion
-		
+
 		#region GetOptions
 		public List<string> GetOptions( string name )
 		{
@@ -238,7 +243,7 @@ namespace Mythic.Package.Editor
 			writer.Formatting = Formatting.Indented;
 			writer.WriteProcessingInstruction( "xml", "version='1.0' encoding='UTF-8'" );
 			writer.WriteStartElement( NodeRoot );
-			
+
 			foreach ( KeyValuePair<string, SettingEntry> kvp in m_Dictionary )
 			{
 				writer.WriteStartElement( NodeSetting );

@@ -24,8 +24,20 @@ namespace Mythic.Package.Editor
 			}
 		}
 
-		public string InnerDirectory{ get { return TextInnerDirectory.Text; } }
-		public CompressionFlag Compression{ get { return (CompressionFlag) TextCompression.SelectedIndex; } }
+		/// <summary>
+		/// Relative path of the file(s) to add/replace
+		/// </summary>
+		public string InnerDirectory{ get { return TextInnerDirectory.Text; } set { TextInnerDirectory.Text = value; } }
+
+		/// <summary>
+		/// Type of compression to use for the file(s)
+		/// </summary>
+		public CompressionFlag Compression{ get { return (CompressionFlag) TextCompression.SelectedIndex; } set { TextCompression.SelectedIndex = TextCompression.Items.IndexOf( value.ToString() ); } }
+
+		/// <summary>
+		/// Set if the file browse should allow multiple files selection
+		/// </summary>
+		public bool MultiFileSelect { get { return OpenFileDialog.Multiselect; } set { OpenFileDialog.Multiselect = value; } }
 		#endregion
 
 		#region Constructors
@@ -51,7 +63,9 @@ namespace Mythic.Package.Editor
 			OpenFileDialog.Title = Globals.LanguageManager.GetString( "AddFile_Dialog_Title" );
 
 			TextInnerDirectory.Items.AddRange( Globals.Settings.InnerDirectoryOptions.ToArray() );
-			TextInnerDirectory.SelectedIndex = 0;
+
+			if ( TextInnerDirectory.Items.Count > 0 )
+				TextInnerDirectory.SelectedIndex = 0;
 
 			TextCompression.Items.AddRange( Enum.GetNames( typeof( CompressionFlag ) ) );
 			TextCompression.SelectedIndex = 0;

@@ -20,6 +20,8 @@ namespace Mythic.Package.Editor
 		private int m_NewHashes;
 		private int m_NewFileNames;
 
+		private bool stopSearch = false;
+
 		public MainForm()
 		{
 			InitializeComponent();
@@ -69,9 +71,11 @@ namespace Mythic.Package.Editor
 			ButtonMergeDictionary.Text = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_DictionaryMerge" );
 
 			ButtonAdd.Text = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_Add" );
+			ButtonAddFolder.Text = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_AddFolder" );
 			ButtonRemove.Text = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_Remove" );
 			ButtonUnpack.Text = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_Unpack" );
 			ButtonReplace.Text = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_Replace" );
+			ButtonReplaceFolder.Text = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_ReplaceFolder" );
 
 			// package tab
 			DetailsPackage.Text = Globals.LanguageManager.GetString( "MainForm_PackageTab_Title" );
@@ -110,6 +114,7 @@ namespace Mythic.Package.Editor
 			// initialize forms
 			SelectProcess = new SelectProcess();
 			AddFile = new AddFile();
+			FolderSearch = new FolderSearch();
 			AddFolder = new AddFolder();
 			About = new About();
 			Settings = new SettingsDialog();
@@ -187,20 +192,40 @@ namespace Mythic.Package.Editor
 			DetailsBlock.Enabled = false;
 		}
 
+		/// <summary>
+		/// Show the file data in the main form
+		/// </summary>
+		/// <param name="file">File data to show</param>
 		private void ChangeFile( MythicPackageFile file )
 		{
+			// get the full file name
 			FileFileNameInfo.Text = file.FileName;
+
+			// get the file hash
 			FileHashInfo.Text = file.FileHash.ToString( "X16" );
+
+			// get the file data hash
 			FileDataHashInfo.Text = file.DataBlockHash.ToString( "X8" );
+
+			// get the file compressed size
 			FileCompressedInfo.Text = ConvertSize( file.CompressedSize );
+
+			// get the file decompressed size
 			FileDecompressedInfo.Text = ConvertSize( file.DecompressedSize );
+
+			// get the file compression type
 			FileCompressionTypeInfo.Text = file.Compression.ToString();
 
+			// show the file details tab
 			FileDetails.SelectedIndex = 2;
 
+			// enable all tabs
 			DetailsPackage.Enabled = true;
 			DetailsBlock.Enabled = true;
 			DetailsFile.Enabled = true;
+
+			// get the file mime type
+			FileMimeInfo.Text = file.GetMimeType();
 		}
 
 		private void ClearFile()
@@ -410,102 +435,114 @@ namespace Mythic.Package.Editor
 
 		private void MainMenuFileOpen_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				if ( ShowOpenPackage() == DialogResult.OK )
-				{
-					List<string> files = new List<string>();
-
-					foreach ( string fileName in OpenFileDialog.FileNames )
-					{
-						if ( !AlreadyOpen( fileName ) )
-							files.Add( fileName );
-					}
-
-					m_NewHashes = HashDictionary.NewHashes;
-					m_NewFileNames = HashDictionary.NewFileNames;
-
-					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_LoadingPackages" );
-					Worker.RunWorkerAsync( new LoadMythicPackageArgs( files.ToArray() ) );
-				}
-			}
-			else
+				// warn the user that he needs to wait
 				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			if ( ShowOpenPackage() == DialogResult.OK )
+			{
+				List<string> files = new List<string>();
+
+				foreach ( string fileName in OpenFileDialog.FileNames )
+				{
+					if ( !AlreadyOpen( fileName ) )
+						files.Add( fileName );
+				}
+
+				m_NewHashes = HashDictionary.NewHashes;
+				m_NewFileNames = HashDictionary.NewFileNames;
+
+				StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_LoadingPackages" );
+				Worker.RunWorkerAsync( new LoadMythicPackageArgs( files.ToArray() ) );
+			}
 		}
 
 		private void MainMenuFileSave_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				TreeNode node = TreeView.SelectedNode;
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 
-				if ( node != null && node.Parent != null )
-					node = node.Parent;
+				return;
+			}
 
-				if ( node != null )
+			TreeNode node = TreeView.SelectedNode;
+
+			if ( node != null && node.Parent != null )
+				node = node.Parent;
+
+			if ( node != null )
+			{
+				MythicPackage package = node.Tag as MythicPackage;
+
+				if ( package != null )
 				{
-					MythicPackage package = node.Tag as MythicPackage;
+					SaveFileDialog.Title = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_Save" );
+					SaveFileDialog.Filter = "UOP files|*.uop";
 
-					if ( package != null )
+					if ( SaveFileDialog.ShowDialog( this ) == DialogResult.OK )
 					{
-						SaveFileDialog.Title = Globals.LanguageManager.GetString( "MainMenu_ToolBarToolTip_Save" );
-						SaveFileDialog.Filter = "UOP files|*.uop";
-
-						if ( SaveFileDialog.ShowDialog( this ) == DialogResult.OK )
-						{
-							StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SavingPackage" );
-							Worker.RunWorkerAsync( new SaveMythicPackageArgs( package, SaveFileDialog.FileName ) );
-						}
+						StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SavingPackage" );
+						Worker.RunWorkerAsync( new SaveMythicPackageArgs( package, SaveFileDialog.FileName ) );
 					}
-					else
-						ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 				}
 				else
 					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 			}
 			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 		}
 
 		private void MainMenuFileClose_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				TreeNode node = TreeView.SelectedNode;
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 
-				if ( node != null )
+				return;
+			}
+
+			TreeNode node = TreeView.SelectedNode;
+
+			if ( node != null )
+			{
+				if ( node.Parent != null )
+					node = node.Parent;
+
+				TreeNode next = node.NextNode;
+
+				if ( next == null )
+					next = node.PrevNode;
+
+				node.Remove();
+
+				if ( next == null )
 				{
-					if ( node.Parent != null )
-						node = node.Parent;
+					ListBox.Items.Clear();
+					ListBox.SelectedItem = -1;
 
-					TreeNode next = node.NextNode;
+					ClearPackage();
+					ClearBlock();
+					ClearFile();
 
-					if ( next == null )
-						next = node.PrevNode;
-
-					node.Remove();
-
-					if ( next == null )
-					{
-						ListBox.Items.Clear();
-						ListBox.SelectedItem = -1;
-
-						ClearPackage();
-						ClearBlock();
-						ClearFile();
-
-						DetailsPackage.Enabled = false;
-						DetailsBlock.Enabled = false;
-						DetailsFile.Enabled = false;
-					}
-
-					TreeView.SelectedNode = next;
+					DetailsPackage.Enabled = false;
+					DetailsBlock.Enabled = false;
+					DetailsFile.Enabled = false;
 				}
-				else
-					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
+
+				TreeView.SelectedNode = next;
 			}
 			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 		}
 
 		private void MainMenuFileExit_Click( object sender, EventArgs e )
@@ -520,64 +557,116 @@ namespace Mythic.Package.Editor
 
 		private void MainMenuDictionaryLoad_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				if ( HashDictionary.Modified )
-				{
-					if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_SaveDictionary" ) ) == DialogResult.Yes )
-					{
-						StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SavingDictionary" );
-						Worker.RunWorkerAsync( new DictionaryArgs( HashDictionary.FileName, DictionaryArgs.SAVE ) );
-					}
-				}
-				else if ( ShowOpenDictionary() == DialogResult.OK )
-				{
-					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_LoadingDictionary" );
-					Worker.RunWorkerAsync( new DictionaryArgs( OpenFileDialog.FileName, DictionaryArgs.LOAD ) );
-				}
-			}
-			else
+				// warn the user that he needs to wait
 				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
-		}
 
-		private void MainMenuDictionarySave_Click( object sender, EventArgs e )
-		{
-			if ( !Worker.IsBusy )
+				return;
+			}
+
+			if ( HashDictionary.Modified )
 			{
-				if ( HashDictionary.Modified )
+				if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_SaveDictionary" ) ) == DialogResult.Yes )
 				{
 					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SavingDictionary" );
 					Worker.RunWorkerAsync( new DictionaryArgs( HashDictionary.FileName, DictionaryArgs.SAVE ) );
 				}
-				else
-					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_DictionaryNotChanged" ) );
+			}
+			else if ( ShowOpenDictionary() == DialogResult.OK )
+			{
+				StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_LoadingDictionary" );
+				Worker.RunWorkerAsync( new DictionaryArgs( OpenFileDialog.FileName, DictionaryArgs.LOAD ) );
+			}
+
+		}
+
+		private void MainMenuDictionarySave_Click( object sender, EventArgs e )
+		{
+			// another operation is in progress?
+			if ( Worker.IsBusy )
+			{
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			if ( HashDictionary.Modified )
+			{
+				StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SavingDictionary" );
+				Worker.RunWorkerAsync( new DictionaryArgs( HashDictionary.FileName, DictionaryArgs.SAVE ) );
 			}
 			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_DictionaryNotChanged" ) );
+
 		}
 
 		private void MainMenuDictionaryMerge_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				if ( ShowOpenDictionary() == DialogResult.OK )
-				{
-					m_NewHashes = HashDictionary.NewHashes;
-					m_NewFileNames = HashDictionary.NewFileNames;
-
-					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_MergingDictionary" );
-					Worker.RunWorkerAsync( new DictionaryArgs( OpenFileDialog.FileName, DictionaryArgs.MERGE ) );
-				}
-			}
-			else
+				// warn the user that he needs to wait
 				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+
+			if ( ShowOpenDictionary() == DialogResult.OK )
+			{
+				m_NewHashes = HashDictionary.NewHashes;
+				m_NewFileNames = HashDictionary.NewFileNames;
+
+				StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_MergingDictionary" );
+				Worker.RunWorkerAsync( new DictionaryArgs( OpenFileDialog.FileName, DictionaryArgs.MERGE ) );
+			}
 		}
 
 		private void MainMenuSpyStart_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				if ( ShowOpenExecutable() == DialogResult.OK )
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+
+			if ( ShowOpenExecutable() == DialogResult.OK )
+			{
+				m_NewHashes = HashDictionary.NewHashes;
+				m_NewFileNames = HashDictionary.NewFileNames;
+
+				MainMenuDictionarySpyStart.Enabled = false;
+				MainMenuDictionarySpyAttach.Enabled = false;
+				MainMenuDictionarySpyDetach.Enabled = true;
+
+				StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SpyingOn", OpenFileDialog.FileName );
+				Worker.RunWorkerAsync( new SpyPathArgs( Globals.HashSpy, OpenFileDialog.FileName ) );
+			}
+		}
+
+		private void MainMenuSpyAttach_Click( object sender, EventArgs e )
+		{
+			// another operation is in progress?
+			if ( Worker.IsBusy )
+			{
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			if ( SelectProcess.ShowDialog( this ) == DialogResult.OK )
+			{
+				Process process = SelectProcess.GetSelectedProcess();
+
+				if ( process != null )
 				{
 					m_NewHashes = HashDictionary.NewHashes;
 					m_NewFileNames = HashDictionary.NewFileNames;
@@ -586,40 +675,12 @@ namespace Mythic.Package.Editor
 					MainMenuDictionarySpyAttach.Enabled = false;
 					MainMenuDictionarySpyDetach.Enabled = true;
 
-					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SpyingOn", OpenFileDialog.FileName );
-					Worker.RunWorkerAsync( new SpyPathArgs( Globals.HashSpy, OpenFileDialog.FileName ) );
+					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SpyingOn", process.ProcessName );
+					Worker.RunWorkerAsync( new SpyProcessArgs( Globals.HashSpy, process ) );
 				}
+				else
+					ShowError( Globals.LanguageManager.GetString( "MainForm_Information_InvalidProcess" ) );
 			}
-			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
-		}
-
-		private void MainMenuSpyAttach_Click( object sender, EventArgs e )
-		{
-			if ( !Worker.IsBusy )
-			{
-				if ( SelectProcess.ShowDialog( this ) == DialogResult.OK )
-				{
-					Process process = SelectProcess.GetSelectedProcess();
-
-					if ( process != null )
-					{
-						m_NewHashes = HashDictionary.NewHashes;
-						m_NewFileNames = HashDictionary.NewFileNames;
-
-						MainMenuDictionarySpyStart.Enabled = false;
-						MainMenuDictionarySpyAttach.Enabled = false;
-						MainMenuDictionarySpyDetach.Enabled = true;
-
-						StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_SpyingOn", process.ProcessName );
-						Worker.RunWorkerAsync( new SpyProcessArgs( Globals.HashSpy, process ) );
-					}
-					else
-						ShowError( Globals.LanguageManager.GetString( "MainForm_Information_InvalidProcess" ) );
-				}
-			}
-			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 		}
 
 		private void MainMenuSpyDetach_Click( object sender, EventArgs e )
@@ -655,295 +716,454 @@ namespace Mythic.Package.Editor
 		#region Toolbar
 		private void ButtonAdd_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				TreeNode node = TreeView.SelectedNode;
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 
-				if ( node != null )
+				return;
+			}
+
+			TreeNode node = TreeView.SelectedNode;
+
+			if ( node != null )
+			{
+				if ( node.Parent != null )
+					node = node.Parent;
+
+				MythicPackage package = node.Tag as MythicPackage;
+
+				if ( package != null )
 				{
-					if ( node.Parent != null )
-						node = node.Parent;
+					// allow the selection of multiple files
+					AddFile.MultiFileSelect = true;
 
-					MythicPackage package = node.Tag as MythicPackage;
-
-					if ( package != null )
+					if ( AddFile.ShowDialog( this ) == DialogResult.OK )
 					{
-						if ( AddFile.ShowDialog( this ) == DialogResult.OK )
+						package.AddFiles( AddFile.Files, AddFile.InnerDirectory, AddFile.Compression );
+
+						TreeView.Nodes[ TreeView.Nodes.Count - 1 ].ForeColor = Color.Red;
+
+						if ( node.Nodes.Count < package.Blocks.Count )
 						{
-							package.AddFiles( AddFile.Files, AddFile.InnerDirectory, AddFile.Compression );
-
-							TreeView.Nodes[ TreeView.Nodes.Count - 1 ].ForeColor = Color.Red;
-
-							if ( node.Nodes.Count < package.Blocks.Count )
+							for ( int i = node.Nodes.Count; i < package.Blocks.Count; i++ )
 							{
-								for ( int i = node.Nodes.Count; i < package.Blocks.Count; i++ )
-								{
-									TreeNode child = new TreeNode( package.Blocks[ i ].ToString() );
-									child.Tag = package.Blocks[ i ];
-									child.ForeColor = Color.Green;
-									node.Nodes.Add( child );
-								}
+								TreeNode child = new TreeNode( package.Blocks[ i ].ToString() );
+								child.Tag = package.Blocks[ i ];
+								child.ForeColor = Color.Green;
+								node.Nodes.Add( child );
 							}
 						}
 					}
-					else
-						ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 				}
 				else
 					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 			}
 			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 		}
 
 		private void ButtonAddFolder_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				TreeNode node = TreeView.SelectedNode;
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 
-				if ( node != null )
+				return;
+			}
+
+			TreeNode node = TreeView.SelectedNode;
+
+			if ( node != null )
+			{
+				if ( node.Parent != null )
+					node = node.Parent;
+
+				MythicPackage package = node.Tag as MythicPackage;
+
+				if ( package != null )
 				{
-					if ( node.Parent != null )
-						node = node.Parent;
-
-					MythicPackage package = node.Tag as MythicPackage;
-
-					if ( package != null )
+					if ( AddFolder.ShowDialog( this ) == DialogResult.OK )
 					{
-						if ( AddFolder.ShowDialog( this ) == DialogResult.OK )
+						package.AddFolder( AddFolder.Folder, AddFolder.Compression );
+
+						TreeView.Nodes[ TreeView.Nodes.Count - 1 ].ForeColor = Color.Red;
+
+						if ( node.Nodes.Count < package.Blocks.Count )
 						{
-							package.AddFolder( AddFolder.Folder, AddFolder.Compression );
-
-							TreeView.Nodes[ TreeView.Nodes.Count - 1 ].ForeColor = Color.Red;
-
-							if ( node.Nodes.Count < package.Blocks.Count )
+							for ( int i = node.Nodes.Count; i < package.Blocks.Count; i++ )
 							{
-								for ( int i = node.Nodes.Count; i < package.Blocks.Count; i++ )
-								{
-									TreeNode child = new TreeNode( package.Blocks[ i ].ToString() );
-									child.Tag = package.Blocks[ i ];
-									child.ForeColor = Color.Green;
-									node.Nodes.Add( child );
-								}
+								TreeNode child = new TreeNode( package.Blocks[ i ].ToString() );
+								child.Tag = package.Blocks[ i ];
+								child.ForeColor = Color.Green;
+								node.Nodes.Add( child );
 							}
 						}
 					}
-					else
-						ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 				}
 				else
 					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 			}
 			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_NothingSelected" ) );
 		}
 
 		private void ButtonRemove_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				TreeNode node = TreeView.SelectedNode;
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 
-				if ( node != null && ListBox.SelectedItems.Count == 0 )
+				return;
+			}
+
+			TreeNode node = TreeView.SelectedNode;
+
+			if ( node != null && ListBox.SelectedItems.Count == 0 )
+			{
+				MythicPackageBlock block = node.Tag as MythicPackageBlock;
+
+				if ( block != null )
 				{
-					MythicPackageBlock block = node.Tag as MythicPackageBlock;
-
-					if ( block != null )
+					if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_Confirm_Remove", block.ToString() ) ) == DialogResult.Yes )
 					{
-						if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_Confirm_Remove", block.ToString() ) ) == DialogResult.Yes )
-						{
-							TreeNode next = null;
-
-							if ( node.Parent != null )
-							{
-								node.Parent.ForeColor = Color.Red;
-
-								for ( int i = node.Index + 1; i < node.Parent.Nodes.Count; i++ )
-								{
-									next = node.Parent.Nodes[ i ];
-									next.Text = String.Format( "Block_{0}", next.Index - 1 );
-								}
-							}
-
-							next = node.NextNode;
-
-							if ( next == null )
-								next = node.PrevNode;
-
-							node.Remove();
-							block.Remove();
-
-							if ( block.IsEmpty )
-								TreeView.SelectedNode = node.Parent;
-							else
-								TreeView.SelectedNode = next;
-
-							TreeView.Refresh();
-						}
-					}
-					else
-						ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_SelectBlockFile" ) );
-				}
-				else if ( node != null && ListBox.SelectedItems.Count > 0 )
-				{
-					List<MythicPackageFile> files = new List<MythicPackageFile>();
-
-					for ( int i = ListBox.SelectedItems.Count - 1; i >= 0; i-- )
-					{
-						if ( ListBox.Items[ i ] is MythicPackageFile )
-							files.Add( (MythicPackageFile) ListBox.SelectedItems[ i ] );
-					}
-
-					if ( files.Count == 1 )
-					{
-						if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_Confirm_Remove", files[ 0 ].ToString() ) ) != DialogResult.Yes )
-							return;
-					}
-					else if ( files.Count > 1 )
-					{
-						if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_Confirm_RemoveMultiple", files.Count.ToString() ) ) != DialogResult.Yes )
-							return;
-					}
-					else
-						return;
-
-					MythicPackageBlock block = node.Tag as MythicPackageBlock;
-
-					if ( block != null )
-					{
-						int index = -1;
-
-						foreach ( MythicPackageFile file in files )
-						{
-							if ( file.Index < block.Files.Count - 1 )
-								index = file.Index;
-							else
-								index = file.Index - 1;
-
-							file.Remove();
-						}
-
-						if ( block.Files.Count == 0 )
-						{
-							if ( node.NextNode == null )
-								TreeView.SelectedNode = node.PrevNode;
-							else
-								TreeView.SelectedNode = node.NextNode;
-
-							node.Remove();
-						}
-						else
-						{
-							ListBox.Items.Clear();
-							ListBox.Items.AddRange( block.Files.ToArray() );
-							ListBox.SelectedIndex = index;
-
-							node.ForeColor = Color.Red;
-						}
+						TreeNode next = null;
 
 						if ( node.Parent != null )
+						{
 							node.Parent.ForeColor = Color.Red;
+
+							for ( int i = node.Index + 1; i < node.Parent.Nodes.Count; i++ )
+							{
+								next = node.Parent.Nodes[ i ];
+								next.Text = String.Format( "Block_{0}", next.Index - 1 );
+							}
+						}
+
+						next = node.NextNode;
+
+						if ( next == null )
+							next = node.PrevNode;
+
+						node.Remove();
+						block.Remove();
+
+						if ( block.IsEmpty )
+							TreeView.SelectedNode = node.Parent;
+						else
+							TreeView.SelectedNode = next;
+
+						TreeView.Refresh();
 					}
 				}
 				else
 					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_SelectBlockFile" ) );
 			}
+			else if ( node != null && ListBox.SelectedItems.Count > 0 )
+			{
+				List<MythicPackageFile> files = new List<MythicPackageFile>();
+
+				for ( int i = ListBox.SelectedItems.Count - 1; i >= 0; i-- )
+				{
+					if ( ListBox.Items[ i ] is MythicPackageFile )
+						files.Add( (MythicPackageFile) ListBox.SelectedItems[ i ] );
+				}
+
+				if ( files.Count == 1 )
+				{
+					if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_Confirm_Remove", files[ 0 ].ToString() ) ) != DialogResult.Yes )
+						return;
+				}
+				else if ( files.Count > 1 )
+				{
+					if ( ShowQuestion( Globals.LanguageManager.GetString( "MainForm_Confirm_RemoveMultiple", files.Count.ToString() ) ) != DialogResult.Yes )
+						return;
+				}
+				else
+					return;
+
+				MythicPackageBlock block = node.Tag as MythicPackageBlock;
+
+				if ( block != null )
+				{
+					int index = -1;
+
+					foreach ( MythicPackageFile file in files )
+					{
+						if ( file.Index < block.Files.Count - 1 )
+							index = file.Index;
+						else
+							index = file.Index - 1;
+
+						file.Remove();
+					}
+
+					if ( block.Files.Count == 0 )
+					{
+						if ( node.NextNode == null )
+							TreeView.SelectedNode = node.PrevNode;
+						else
+							TreeView.SelectedNode = node.NextNode;
+
+						node.Remove();
+					}
+					else
+					{
+						ListBox.Items.Clear();
+						ListBox.Items.AddRange( block.Files.ToArray() );
+						ListBox.SelectedIndex = index;
+
+						node.ForeColor = Color.Red;
+					}
+
+					if ( node.Parent != null )
+						node.Parent.ForeColor = Color.Red;
+				}
+			}
 			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_SelectBlockFile" ) );
 		}
 
+		/// <summary>
+		/// Unpack a file/block/entire uop
+		/// </summary>
 		private void ButtonUnpack_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// is there another operation running?
+			if ( Worker.IsBusy )
 			{
-				UnpackMythicPackageArgs args = null;
-				string path = Globals.Settings.OutputPath;
-
-				// if there is no path set on the stored settings, we set a default one.
-				if ( !Directory.Exists( path ) )
-                {
-					// default path
-					path = Path.Combine( Application.StartupPath, "Output" );
-
-					// store the default path
-					Globals.Settings.OutputPath = path;
-
-					// save the settings
-					Globals.Settings.Save();
-				}
-
-				// if the default path has never been used, we create the folder
-				if ( !Directory.Exists( path ) )
-					Directory.CreateDirectory( path );
-
-				bool innerPath = Globals.Settings.WithInnerPath;
-
-				if ( ListBox.SelectedItems.Count > 0 )
-				{
-					List<MythicPackageFile> files = new List<MythicPackageFile>();
-
-					foreach ( object o in ListBox.SelectedItems )
-					{
-						if ( o != null && o is MythicPackageFile && ( (MythicPackageFile)o ).FileName != string.Empty )
-							files.Add( (MythicPackageFile) o );
-					}
-
-					if ( files.Count > 0 )
-						args = new UnpackMythicPackageArgs( files.ToArray(), path, innerPath );
-				}
-				else if ( TreeView.SelectedNode != null )
-				{
-					if ( TreeView.SelectedNode.Tag is MythicPackage )
-					{
-						MythicPackage package = (MythicPackage) TreeView.SelectedNode.Tag;
-						args = new UnpackMythicPackageArgs( package, path, innerPath );
-					}
-					else if ( TreeView.SelectedNode.Tag is MythicPackageBlock )
-					{
-						MythicPackageBlock block = (MythicPackageBlock) TreeView.SelectedNode.Tag;
-						args = new UnpackMythicPackageArgs( block, path, innerPath );
-					}
-				}
-
-				if ( args != null )
-				{
-					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_UnpackingIn", path );
-					Worker.RunWorkerAsync( args );
-				}
-				else
-					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_SelectPackageBlockFile" ) );
-			}
-			else
 				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			// get the output path
+			string path = Globals.Settings.OutputPath;
+
+			// if there is no path set on the stored settings, we set a default one.
+			if ( !Directory.Exists( path ) )
+			{
+				// default path
+				path = Path.Combine( Application.StartupPath, "Output" );
+
+				// store the default path
+				Globals.Settings.OutputPath = path;
+
+				// save the settings
+				Globals.Settings.Save();
+			}
+
+			// if the default path has never been used, we create the folder
+			if ( !Directory.Exists( path ) )
+				Directory.CreateDirectory( path );
+
+			// use the files inner path?
+			bool innerPath = Globals.Settings.WithInnerPath;
+
+			// initialize the unpack result variable
+			UnpackMythicPackageArgs args = null;
+
+			// do we have to extract multiple files?
+			if ( ListBox.SelectedItems.Count > 0 )
+			{
+				// create a list for the files
+				List<MythicPackageFile> files = new List<MythicPackageFile>();
+
+				// parse the selected files
+				foreach ( object o in ListBox.SelectedItems )
+				{
+					// if we have the file data and name, we add the file
+					if ( o != null && o is MythicPackageFile )
+						files.Add( (MythicPackageFile) o );
+				}
+
+				// do we have any file to unpack? if we do, we start unpacking
+				if ( files.Count > 0 )
+					args = new UnpackMythicPackageArgs( files.ToArray(), path, innerPath );
+			}
+			// do we have a block/uop file selected?
+			else if ( TreeView.SelectedNode != null )
+			{
+				// do we have the uop file selected?
+				if ( TreeView.SelectedNode.Tag is MythicPackage )
+				{
+					// get the uop data
+					MythicPackage package = (MythicPackage) TreeView.SelectedNode.Tag;
+
+					// unpack the uop file
+					args = new UnpackMythicPackageArgs( package, path, innerPath );
+				}
+				// do we have a block selected?
+				else if ( TreeView.SelectedNode.Tag is MythicPackageBlock )
+				{
+					// get the block data
+					MythicPackageBlock block = (MythicPackageBlock) TreeView.SelectedNode.Tag;
+
+					// unpack the block
+					args = new UnpackMythicPackageArgs( block, path, innerPath );
+				}
+			}
+
+			// did we start any unpack operation?
+			if ( args != null )
+			{
+				// set the status to unpack
+				StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_UnpackingIn", path );
+
+				// start the unpack thread
+				Worker.RunWorkerAsync( args );
+			}
+			else // nothing to unpack
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_SelectPackageBlockFile" ) );
 		}
 
+		/// <summary>
+		/// Replace the selected file
+		/// </summary>
 		private void ButtonReplace_Click( object sender, EventArgs e )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				if ( TreeView.SelectedNode != null && ListBox.SelectedItems.Count == 1 )
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			// is there a file selected?
+			if ( TreeView.SelectedNode == null || ListBox.SelectedItems.Count <= 0 )
+			{
+				// warn the user that he needs to select a file first
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_SelectFile" ) );
+
+				return;
+			}
+
+			// get the selected file data
+			MythicPackageFile file = (MythicPackageFile)ListBox.SelectedItem;
+
+			// make sure there is a file selected
+			if ( file == null )
+				return;
+
+			// set the file relative path
+			AddFile.InnerDirectory = file.FilePath;
+
+			// set the file compression
+			AddFile.Compression = file.Compression;
+
+			// allow the selection of only 1 file
+			AddFile.MultiFileSelect = false;
+
+			// show the add file dialog and make sure we the file to add
+			if ( AddFile.ShowDialog( this ) == DialogResult.OK && AddFile.Files.Length > 0 )
+			{
+				// do the file replacement
+				file.Replace( AddFile.Files[0], AddFile.InnerDirectory, AddFile.Compression );
+
+				// highlight in red the block and uop file name
+				if ( TreeView.SelectedNode.Parent != null )
+					TreeView.SelectedNode.Parent.ForeColor = Color.Red;
+
+				// highlight the block or uop file in red
+				TreeView.SelectedNode.ForeColor = Color.Red;
+
+				// refresh the files list
+				ChangeBlock( TreeView.SelectedNode.Tag as MythicPackageBlock );
+
+				// select the file we added
+				ListBox.SelectedItem = file;
+			}
+		}
+
+		/// <summary>
+		/// Replace multiple files with the one inside the selected folder and sub-folders
+		/// </summary>
+		private void ButtonReplaceFolder_Click( object sender, EventArgs e )
+		{
+			// another operation is in progress?
+			if ( Worker.IsBusy )
+			{
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			// set the root folder for the search
+			SelectFolder.RootFolder = Environment.SpecialFolder.MyComputer;
+
+			// set the open folder description
+			SelectFolder.Description = "Select the folder containing the file to use as replacement.";
+
+			// did we have a folder selected?
+			if ( SelectFolder.ShowDialog( this ) == DialogResult.OK )
+			{
+				// get the list of all the files in the folder and sub-folders
+				List<string> files = DirSearch( SelectFolder.SelectedPath );
+
+				// search the file in all the open uop files
+				for ( int i = 0; i < TreeView.Nodes.Count; i++ )
 				{
-					MythicPackageFile file = ListBox.SelectedItem as MythicPackageFile;
+					// get the package node
+					TreeNode node = TreeView.Nodes[ i ];
 
-					if ( file != null && AddFile.ShowDialog( this ) == DialogResult.OK )
+					// is this a package node?
+					if ( node.Tag is MythicPackage )
 					{
-						if ( AddFile.Files.Length == 1 )
-							file.Replace( AddFile.Files[ 0 ], AddFile.InnerDirectory, AddFile.Compression );
+						// get the current UOP file
+						MythicPackage currentUOP = (MythicPackage)node.Tag;
 
-						if ( TreeView.SelectedNode.Parent != null )
-							TreeView.SelectedNode.Parent.ForeColor = Color.Red;
+						// scan the files list
+						for ( int j = 0; j < files.Count; j++ )
+						{
+							// get the file name
+							string f = files[j].ToLower() ;
 
-						TreeView.SelectedNode.ForeColor = Color.Red;
-						ChangeBlock( TreeView.SelectedNode.Tag as MythicPackageBlock );
-						ListBox.SelectedItem = file;
+							// did we find the file?
+							bool found = false;
+
+							// search for the file name
+							foreach ( MythicPackageBlock block in currentUOP.Blocks )
+                            {
+								foreach ( MythicPackageFile file in block.Files )
+								{
+									// is this the file we're looking for?
+									if ( Path.GetFileName( file.FileName ) == Path.GetFileName( f ) )
+									{
+										// replace the file
+										file.Replace( f, file.FilePath, file.Compression );
+
+										// remove the file from the list
+										files.Remove( f );
+
+										// flag that we found the file
+										found = true;
+
+										break;
+									}
+								}
+
+								// let the application refresh
+								Application.DoEvents();
+
+								// we can move to the next file if we found the one we're looking for
+								if ( found )
+									break;
+							}
+
+							// let the application refresh
+							Application.DoEvents();
+						}
 					}
 				}
-				else
-					ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_SelectFile" ) );
 			}
-			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 		}
 		#endregion
 
@@ -952,165 +1172,169 @@ namespace Mythic.Package.Editor
 
 		private void HashSearch( string keyword )
 		{
-			if ( !Worker.IsBusy )
+			// another operation is in progress?
+			if ( Worker.IsBusy )
 			{
-				if ( !String.IsNullOrEmpty( keyword ) )
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			if ( !String.IsNullOrEmpty( keyword ) )
+			{
+				List<SearchExpressionEntry> entries = new List<SearchExpressionEntry>();
+				char[] after = null;
+				int s, e, nameLength = 0, end = 0, start = -1;
+
+				do
 				{
-					List<SearchExpressionEntry> entries = new List<SearchExpressionEntry>();
-					char[] after = null;
-					int s, e, nameLength = 0, end = 0, start = -1;
+					s = keyword.IndexOf( '{', start + 1 );
+					e = keyword.IndexOf( '}', start + 1 );
 
-					do
+					if ( s < 0 && e < 0 )
 					{
-						s = keyword.IndexOf( '{', start + 1 );
-						e = keyword.IndexOf( '}', start + 1 );
+						if ( start == -1 )
+							ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_MissingBracket", "{ and }" ), SearchBox, 0, -75 );
 
-						if ( s < 0 && e < 0 )
-						{
-							if ( start == -1 )
-								ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_MissingBracket", "{ and }" ), SearchBox, 0, -75 );
-
-							break;
-						}
-						else if ( s < 0 )
-						{
-							ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_MissingBracket", "{" ), SearchBox, 0, -75 );
-							break;
-						}
-						else if ( e < 0 )
-						{
-							ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_MissingBracket", "}" ), SearchBox, 0, -75 );
-							break;
-						}
-						else if ( e < s )
-						{
-							ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_InvalidBracketOrder" ), SearchBox, 0, -75 );
-							break;
-						}
-						else
-						{
-							string before, center;
-							char[] from, to;
-
-							before = keyword.Substring( start + 1, s - end );
-							center = keyword.Substring( s + 1, e - s - 1 );
-							after = keyword.Substring( e + 1, keyword.Length - e - 1 ).ToCharArray();
-
-							int dash = center.IndexOf( '-' );
-							int length;
-
-							if ( dash > 0 )
-							{
-								from = center.Substring( 0, dash ).ToCharArray();
-								to = center.Substring( dash + 1, center.Length - dash - 1 ).ToCharArray();
-
-								if ( from.Length != to.Length )
-								{
-									ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_InvalidLength" ), SearchBox, s * 5, -75 );
-									return;
-								}
-
-								length = from.Length;
-
-								if ( length <= 0 )
-								{
-									ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_NullLength" ), SearchBox, s * 5, -75 );
-									return;
-								}
-							}
-							else
-							{
-								length = center.Length;
-
-								if ( length <= 0 )
-								{
-									ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_NullLength" ), SearchBox, s * 5, -75 );
-									return;
-								}
-
-								from = new String( '0', length ).ToCharArray();
-								to = center.ToCharArray();
-							}
-
-							for ( int i = 0; i < length; i++ )
-							{
-								if ( from[ i ] < '0' || ( from[ i ] > '9' && from[ i ] < 'a' ) || from[ i ] > 'z' ||
-									 to[ i ] < '0' || ( to[ i ] > '9' && to[ i ] < 'a' ) || to[ i ] > 'z' )
-								{
-									ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_InvalidCharacters" ), SearchBox, s * 5, -75 );
-									return;
-								}
-							}
-
-							nameLength += before.Length + length;
-							entries.Add( new SearchExpressionEntry( before.ToCharArray(), from, to, nameLength - length, nameLength - 1 ) );
-						}
-
-						start = e;
-						end = e + 1;
+						break;
 					}
-					while ( s >= 0 && e >= 0 );
-
-					if ( entries.Count > 0 )
+					else if ( s < 0 )
 					{
-						object target = null;
+						ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_MissingBracket", "{" ), SearchBox, 0, -75 );
+						break;
+					}
+					else if ( e < 0 )
+					{
+						ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_MissingBracket", "}" ), SearchBox, 0, -75 );
+						break;
+					}
+					else if ( e < s )
+					{
+						ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_InvalidBracketOrder" ), SearchBox, 0, -75 );
+						break;
+					}
+					else
+					{
+						string before, center;
+						char[] from, to;
 
-						if ( ListBox.SelectedItems.Count > 0 )
+						before = keyword.Substring( start + 1, s - end );
+						center = keyword.Substring( s + 1, e - s - 1 );
+						after = keyword.Substring( e + 1, keyword.Length - e - 1 ).ToCharArray();
+
+						int dash = center.IndexOf( '-' );
+						int length;
+
+						if ( dash > 0 )
 						{
-							List<MythicPackageFile> list = new List<MythicPackageFile>();
+							from = center.Substring( 0, dash ).ToCharArray();
+							to = center.Substring( dash + 1, center.Length - dash - 1 ).ToCharArray();
 
-							for ( int i = ListBox.SelectedItems.Count - 1; i >= 0; i-- )
+							if ( from.Length != to.Length )
 							{
-								if ( ListBox.SelectedItems[ i ] is MythicPackageFile )
-									list.Add( (MythicPackageFile) ListBox.SelectedItems[ i ] );
+								ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_InvalidLength" ), SearchBox, s * 5, -75 );
+								return;
 							}
 
-							target = list.ToArray();
-						}
-						else if ( TreeView.SelectedNode != null )
-						{
-							if ( TreeView.SelectedNode.Tag is MythicPackage )
+							length = from.Length;
+
+							if ( length <= 0 )
 							{
-								List<MythicPackage> list = new List<MythicPackage>();
-								list.Add( (MythicPackage) TreeView.SelectedNode.Tag );
-								target = list.ToArray();
-							}
-							else if ( TreeView.SelectedNode.Tag is MythicPackageBlock )
-							{
-								List<MythicPackageBlock> list = new List<MythicPackageBlock>();
-								list.Add( (MythicPackageBlock) TreeView.SelectedNode.Tag );
-								target = list.ToArray();
+								ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_NullLength" ), SearchBox, s * 5, -75 );
+								return;
 							}
 						}
 						else
 						{
-							List<MythicPackage> list = new List<MythicPackage>();
+							length = center.Length;
 
-							foreach ( TreeNode node in TreeView.Nodes )
+							if ( length <= 0 )
 							{
-								if ( node.Tag is MythicPackage )
-									list.Add( (MythicPackage) node.Tag );
+								ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_NullLength" ), SearchBox, s * 5, -75 );
+								return;
 							}
 
-							target = list.ToArray();
+							from = new String( '0', length ).ToCharArray();
+							to = center.ToCharArray();
+						}
 
-							if ( list.Count == 0 )
+						for ( int i = 0; i < length; i++ )
+						{
+							if ( from[ i ] < '0' || ( from[ i ] > '9' && from[ i ] < 'a' ) || from[ i ] > 'z' ||
+									to[ i ] < '0' || ( to[ i ] > '9' && to[ i ] < 'a' ) || to[ i ] > 'z' )
 							{
-								ShowInfo( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_NothingSelected" ) );
+								ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_InvalidCharacters" ), SearchBox, s * 5, -75 );
 								return;
 							}
 						}
 
-						StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_Searching" );
-						StatusProgressBar.Style = ProgressBarStyle.Blocks;
-						Worker.RunWorkerAsync( new SearchExpressionArgs( target, entries, after, nameLength + after.Length ) );
+						nameLength += before.Length + length;
+						entries.Add( new SearchExpressionEntry( before.ToCharArray(), from, to, nameLength - length, nameLength - 1 ) );
 					}
+
+					start = e;
+					end = e + 1;
 				}
-				else
-					ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_Invalid" ), SearchBox, 0, -75 );
+				while ( s >= 0 && e >= 0 );
+
+				if ( entries.Count > 0 )
+				{
+					object target = null;
+
+					if ( ListBox.SelectedItems.Count > 0 )
+					{
+						List<MythicPackageFile> list = new List<MythicPackageFile>();
+
+						for ( int i = ListBox.SelectedItems.Count - 1; i >= 0; i-- )
+						{
+							if ( ListBox.SelectedItems[ i ] is MythicPackageFile )
+								list.Add( (MythicPackageFile) ListBox.SelectedItems[ i ] );
+						}
+
+						target = list.ToArray();
+					}
+					else if ( TreeView.SelectedNode != null )
+					{
+						if ( TreeView.SelectedNode.Tag is MythicPackage )
+						{
+							List<MythicPackage> list = new List<MythicPackage>();
+							list.Add( (MythicPackage) TreeView.SelectedNode.Tag );
+							target = list.ToArray();
+						}
+						else if ( TreeView.SelectedNode.Tag is MythicPackageBlock )
+						{
+							List<MythicPackageBlock> list = new List<MythicPackageBlock>();
+							list.Add( (MythicPackageBlock) TreeView.SelectedNode.Tag );
+							target = list.ToArray();
+						}
+					}
+					else
+					{
+						List<MythicPackage> list = new List<MythicPackage>();
+
+						foreach ( TreeNode node in TreeView.Nodes )
+						{
+							if ( node.Tag is MythicPackage )
+								list.Add( (MythicPackage) node.Tag );
+						}
+
+						target = list.ToArray();
+
+						if ( list.Count == 0 )
+						{
+							ShowInfo( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_NothingSelected" ) );
+							return;
+						}
+					}
+
+					StatusLabel.Text = Globals.LanguageManager.GetString( "MainForm_Information_Searching" );
+					StatusProgressBar.Style = ProgressBarStyle.Blocks;
+					Worker.RunWorkerAsync( new SearchExpressionArgs( target, entries, after, nameLength + after.Length ) );
+				}
 			}
 			else
-				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+				ErrorTooltip.Show( Globals.LanguageManager.GetString( "MainForm_SearchBox_ToolTip_Invalid" ), SearchBox, 0, -75 );
 		}
 
 		private void TextSearch( string keyword, bool next )
@@ -1183,12 +1407,22 @@ namespace Mythic.Package.Editor
 
 			if ( result.Found )
 			{
+				// get the current tree node
 				TreeNode node = TreeView.Nodes[ pindex ];
+
+				// expand the tree node
 				node.Expand();
-				TreeView.SelectedNode = node.Nodes[ result.Block ];
+
+				// select the block
+				TreeView.SelectedNode = node.Nodes[result.Block];
+
+				// reset the list selection
 				ListBox.SelectedIndex = -1;
+
+				// select the reult file
 				ListBox.SelectedIndex = result.File;
 
+				// focus the searchbox
 				SearchBox.Focus();
 			}
 			else
@@ -1275,7 +1509,32 @@ namespace Mythic.Package.Editor
 				MythicPackage[] packs = new MythicPackage[ args.Names.Length ];
 
 				for ( int i = 0; i < args.Names.Length; i ++ )
-					packs[ i ] = new MythicPackage( args.Names[ i ] );
+                {
+					// load the uop
+					packs[i] = new MythicPackage( args.Names[i] );
+
+					// scan the uop files
+					foreach ( MythicPackageBlock block in packs[i].Blocks )
+						foreach ( MythicPackageFile file in block.Files )
+                        {
+							// do we have the file name?
+							if ( !string.IsNullOrEmpty( file.FileName ) && !string.IsNullOrEmpty( file.FilePath ) )
+							{
+								// is the folder available in the settings?
+								if ( !Globals.Settings.InnerDirectoryOptions.Contains( file.FilePath ) )
+								{
+									// add the folder to the list
+									Globals.Settings.AddInnerDirectory( file.FilePath );
+
+									// write the path added to the log
+									Globals.Logger.LogMessage( "Added new path to the settings: " + file.FilePath );
+								}
+							}
+						}
+
+					// save the settings
+					Globals.Settings.Save();
+				}
 
 				args.Result = packs;
 			}
@@ -1598,24 +1857,27 @@ namespace Mythic.Package.Editor
 			}
 		}
 
+		/// <summary>
+		/// A file on the list has been selected
+		/// </summary>
 		private void ListBox_SelectedIndexChanged( object sender, EventArgs e )
 		{
-			MythicPackageFile file = ListBox.SelectedItem as MythicPackageFile;
+			// get the selected file data
+			MythicPackageFile file = (MythicPackageFile)ListBox.SelectedItem;
 
+			// do we have a valid file?
 			if ( file != null )
 			{
-				if ( file.FileName != null )
-					FileUnsetButton.Visible = true;
-				else
-					FileUnsetButton.Visible = false;
+				// toggle the button to unset the file name (available only if we have a file name)
+				FileUnsetButton.Visible = file.FileName != null;
 
+				// load the file data
 				ChangeFile( file );
 			}
-			else
-			{
+			else // clear the file data
 				ClearFile();
-			}
 
+			// clear the search keyword
 			m_OldKeyword = null;
 		}
 
@@ -1654,10 +1916,17 @@ namespace Mythic.Package.Editor
 
 		private void SearchBox_KeyPress( object sender, KeyPressEventArgs e )
 		{
+			// has enter been pressed?
 			if ( (Keys) e.KeyChar == Keys.Enter )
 			{
+				// search the text
 				TextSearch( SearchBox.Text, String.Equals( SearchBox.Text, m_OldKeyword ) );
+
+				// store the old text
 				m_OldKeyword = SearchBox.Text;
+
+				// disable the windows beep
+				e.Handled = true;
 			}
 		}
 
@@ -1685,7 +1954,16 @@ namespace Mythic.Package.Editor
 					if ( idx != null && idx.FileName == null )
 					{
 						new GuessFile( idx ).ShowDialog();
-						FileFileNameInfo.Text = idx.FileName;
+
+						// do we have a new file name?
+						if ( !string.IsNullOrEmpty( idx.FileName ) )
+                        {
+							// set the new file name if we have one
+							FileFileNameInfo.Text = idx.FileName;
+
+							// update the file name in the list
+							ListBox.Items[ListBox.SelectedIndex] = Path.GetFileName( idx.FileName );
+						}
 					}
 				}
 			}
@@ -1707,20 +1985,283 @@ namespace Mythic.Package.Editor
 			else
 				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_ErrorUnset" ) );
 		}
-        #endregion
+		#endregion
 
-        #endregion
+		#endregion
 
-        private void FolderFiles_Click( object sender, EventArgs e )
-        {
-			// set the root folder for the search
-			SelectFolder.RootFolder = Environment.SpecialFolder.MyComputer;
+		/// <summary>
+		/// try to guess file names using brute force and the specified extension
+		/// </summary>
+		private void btnBrute_Click( object sender, EventArgs e )
+		{
+			// another operation is in progress?
+			if ( Worker.IsBusy )
+			{
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
 
-			// select the folder containing all files
-			if ( SelectFolder.ShowDialog() == DialogResult.OK )
+				return;
+			}
+
+			// make sure we have an extension in the search box
+			if ( SearchBox.Text == string.Empty )
             {
+				// warn to use the correct pattern
+				ErrorTooltip.Show( "Enter: <folder>/*.<extension>.\n Example: build/tileartlegacy/*.dds\n\nYou can also use a number instead of * to set where to start from.", SearchBox, 0, -75 );
+
+				return;
+			}
+
+			// file extension to use
+			string extension;
+
+			// file path to use
+			string pth;
+
+			// index to start from
+			int startIdx = 0;
+
+			// do we have a file name? then we get the extension of the file name
+			if ( SearchBox.Text.Length > 3 )
+				try
+				{
+					// get the file extension
+					extension = Path.GetExtension( SearchBox.Text );
+
+					// get the file path
+					pth = SearchBox.Text.Replace( Path.GetFileName( SearchBox.Text ), "" );
+
+					// if there is no *, we use the specified number as a starting point
+					if ( !SearchBox.Text.Contains( "*" ) )
+						startIdx = int.Parse( Path.GetFileName( SearchBox.Text ).Replace( extension, "" ) );
+				}
+				catch
+                {
+					// warn to use the correct pattern
+					ErrorTooltip.Show( "Enter: <folder>/*.<extension>.\n Example: build/tileartlegacy/*.dds\n\nYou can also use a number instead of * to set where to start from.", SearchBox, 0, -75 );
+
+					return;
+				}
+			else
+            {
+				// warn to use the correct pattern
+				ErrorTooltip.Show( "Enter: <folder>/*.<extension>.\n Example: build/tileartlegacy/*.dds\n\nYou can also use a number as file name instead of * to set where to start from.", SearchBox, 0, -75 );
+
+				return;
+			}
+
+			// base search result variable
+			SearchResult result = SearchResult.NotFound;
+
+			// reset the stop search flag
+			stopSearch = false;
+
+			// enable the stop search button
+			btnStopSearch.Enabled = true;
+
+			// create a list of files to check
+			List<MythicPackageFile> filesToCheck = new List<MythicPackageFile>();
+
+			// search the files for all opened packages
+			for ( int i = 0; i < TreeView.Nodes.Count; i++ )
+			{
+				// get the package node
+				TreeNode node = TreeView.Nodes[ i ];
+
+				// is this a package node?
+				if ( node.Tag is MythicPackage )
+				{
+					// get the current UOP file
+					MythicPackage currentUOP = ( (MythicPackage)node.Tag );
+
+					// search for files with no names or broken names
+					foreach ( MythicPackageBlock block in currentUOP.Blocks )
+						foreach ( MythicPackageFile file in block.Files )
+							if ( string.IsNullOrEmpty( file.FileName ) || string.IsNullOrEmpty( Path.GetExtension( file.FileName ) ) )
+							{
+								// remove the broken file name
+								file.FileName = null;
+
+								// remove the broken name from the dictionary
+								HashDictionary.Unset( file.FileHash );
+
+								// add the file to the list
+								filesToCheck.Add( file );
+							}
+				}
+			}
+
+			// no files without a name? nothing to do then...
+			if ( filesToCheck.Count <= 0 )
+            {
+				// update the status
+				StatusLabel.Text = "There are no files without a name!";
+
+				return;
+			}
+
+			// update the status
+			StatusLabel.Text = "Found : " + filesToCheck.Count + " files without a name. First file - Block: " + filesToCheck[0].Parent.Index + ", Index: " + filesToCheck[0].Index;
+
+			// total files found
+			int total = 0;
+
+			// total files that needs fixing
+			int filesToFix = filesToCheck.Count;
+
+			// initialize the leading zeroes string
+			string leadZero = "";
+
+			// fill the correct number of leading zeroes
+			for ( int k = 0; k < txtLeadZeroes.Value; k++ )
+				leadZero += "0";
+
+			// initialize the base name to use in case we have the *
+			string baseName = "";
+
+			// if we have * we set the base name to use
+			if ( SearchBox.Text.Contains( "*" ) )
+				baseName = SearchBox.Text;
+
+			// try all the possible numbers between 0 and 100m
+			for ( int j = startIdx; j < 99999999; j++ )
+			{
+				// end the search if the stop search variable is active
+				if ( stopSearch || filesToCheck.Count <= 0 )
+					break;
+
+				// generate the file name
+				string fileName;
+
+				// do we have a plain number file to do?
+				if ( string.IsNullOrEmpty( baseName ) )
+					fileName = Path.Combine( pth, j.ToString( leadZero ) + extension );
+
+				else // just replace * with the number
+					fileName = baseName.Replace( "*", j.ToString( leadZero ) );
+
+				// update the file name in the textbox
+				SearchBox.Text = fileName;
+
+				// calculate the current progress
+				StatusProgressBar.Value = j / 99999999;
+
+				// scan all files that needs to be fixed
+				for ( int i = 0; i < filesToCheck.Count; i++ )
+				{
+					// get the current file
+					MythicPackageFile f = filesToCheck[i];
+
+					// if the file has a correct name, we can move on
+					if ( !string.IsNullOrEmpty( f.FileName ) && !string.IsNullOrEmpty( Path.GetExtension( f.FileName ) ) )
+                    {
+						// remove the file from the list
+						filesToCheck.Remove( f );
+
+						continue;
+					}
+
+					// check if the file is compatible
+					if ( f.Search( fileName ) )
+                    {
+						// create the search result
+						result = new SearchResult( f.Parent.Index, f.Index );
+
+						// if we found the file, we increase the counter
+						if ( result.Found )
+						{
+							// remove the file from the list
+							filesToCheck.Remove( f );
+
+							// increase the amount of files found
+							total++;
+
+							// update the status
+							StatusLabel.Text = "New names found : " + total + " of " + filesToFix + " files with an unknown name.";
+						}
+					}
+				}
+
+				// let the application refresh
+				Application.DoEvents();
+			}
+
+			// remove the stop search flag
+			stopSearch = false;
+
+			// disable the stop search button
+			btnStopSearch.Enabled = false;
+
+			// update the status
+			StatusLabel.Text = "Brute force search ended! Fixed: " + total + " file names.";
+		}
+
+		/// <summary>
+		/// Search by files contained inside a folder
+		/// </summary>
+		private void FolderFiles_Click( object sender, EventArgs e )
+        {
+			// another operation is in progress?
+			if ( Worker.IsBusy )
+			{
+				// warn the user that he needs to wait
+				ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_WorkerBusy" ) );
+
+				return;
+			}
+
+			// create a list of files to check
+			List<MythicPackageFile> filesToCheck = new List<MythicPackageFile>();
+
+			// search the files for all opened packages
+			for ( int i = 0; i < TreeView.Nodes.Count; i++ )
+			{
+				// get the package node
+				TreeNode node = TreeView.Nodes[ i ];
+
+				// is this a package node?
+				if ( node.Tag is MythicPackage )
+				{
+					// get the current UOP file
+					MythicPackage currentUOP = (MythicPackage)node.Tag;
+
+					// search for files with no names or broken names
+					foreach ( MythicPackageBlock block in currentUOP.Blocks )
+						foreach ( MythicPackageFile file in block.Files )
+							if ( string.IsNullOrEmpty( file.FileName ) || string.IsNullOrEmpty( Path.GetExtension( file.FileName ) ) )
+							{
+								// remove the broken file name
+								file.FileName = null;
+
+								// remove the broken name from the dictionary
+								HashDictionary.Unset( file.FileHash );
+
+								// add the file to the list
+								filesToCheck.Add( file );
+							}
+				}
+			}
+
+			// no files without a name? nothing to do then...
+			if ( filesToCheck.Count <= 0 )
+			{
+				// update the status
+				StatusLabel.Text = "There are no files without a name!";
+
+				return;
+			}
+
+			// show the folder search dialog
+			if ( FolderSearch.ShowDialog( this ) == DialogResult.OK )
+			{
+				// get the inner folder for the search (except the final \)
+				string innerFolder = FolderSearch.InnerDirectory.Substring(0, FolderSearch.InnerDirectory.Length - 1 );
+
+				// get the root directory to use
+				string rootFolder = FolderSearch.RootDirectory;
+
 				// get the list of all files in the folder (and sub-folders)
-				List<String> files = DirSearch( SelectFolder.SelectedPath );
+				List<String> files = DirSearch( rootFolder );
 
 				// base search result variable
 				SearchResult result = SearchResult.NotFound;
@@ -1728,46 +2269,111 @@ namespace Mythic.Package.Editor
 				// total files found
 				int total = 0;
 
-				// scan all files
-				for ( int f = 0; f < files.Count; f++ )
-				{
-					// search the files for all opened packages
-					for ( int i = 0; i < TreeView.Nodes.Count; i++ )
-					{
-						// get the package node
-						TreeNode node = TreeView.Nodes[ i ];
+				// total files that needs fixing
+				int filesToFix = filesToCheck.Count;
 
-						// is this a package node?
-						if ( node.Tag is MythicPackage )
+				// scan all files
+				for ( int i = 0; i < files.Count; i++ )
+				{
+					// get the file name
+					string fileName = ( innerFolder + files[i].Replace( rootFolder, "" ).Replace(@"\", "/" ) ).ToLower();
+
+					// update the file name in the textbox
+					SearchBox.Text = fileName;
+
+					// let the application refresh
+					Application.DoEvents();
+
+					// search the files for all opened packages
+					for ( int k = 0; k < filesToCheck.Count; k++ )
+					{
+						// get the current file
+						MythicPackageFile f = filesToCheck[k];
+
+						// if the file has a correct name, we can move on
+						if ( !string.IsNullOrEmpty( f.FileName ) && !string.IsNullOrEmpty( Path.GetExtension( f.FileName ) ) )
 						{
-							// search the file in the package
-							result = ( (MythicPackage)node.Tag ).Search( Path.GetFileName( files[f] ).ToLower() );
+							// remove the file from the list
+							filesToCheck.Remove( f );
+
+							continue;
+						}
+
+						// check if the file is compatible
+						if ( f.Search( fileName ) )
+						{
+							// create the search result
+							result = new SearchResult( f.Parent.Index, f.Index );
 
 							// if we found the file, we increase the counter
 							if ( result.Found )
+							{
+								// remove the file from the list
+								filesToCheck.Remove( f );
+
+								// increase the amount of files found
 								total++;
+
+								// update the status
+								StatusLabel.Text = "New names found : " + total + " of " + filesToFix + " files with an unknown name.";
+							}
 						}
+						else // try every possible known folder folder
+                        {
+							// scan all the known internal folders
+							foreach( string dir in Globals.Settings.InnerDirectoryOptions )
+                            {
+								// create the path for the current folder
+								string testFileName = Path.Combine(dir, Path.GetFileName( files[i] ) );
+
+								// check if the file is compatible
+								if ( f.Search( testFileName ) )
+								{
+									// create the search result
+									result = new SearchResult( f.Parent.Index, f.Index );
+
+									// if we found the file, we increase the counter
+									if ( result.Found )
+									{
+										// remove the file from the list
+										filesToCheck.Remove( f );
+
+										// increase the amount of files found
+										total++;
+
+										// update the status
+										StatusLabel.Text = "New names found : " + total + " of " + filesToFix + " files with an unknown name.";
+									}
+								}
+							}
+                        }
 					}
 				}
 
 				// show how many we have found
-				ShowInfo( "Found: " + total + "/" + files.Count );
+				ShowInfo( "Found: " + total + "/" + files.Count + ". " + filesToCheck.Count + " files remaining with an unknown name. ");
 			}
 		}
 
+		/// <summary>
+		/// Create a list of all the files
+		/// </summary>
+		/// <param name="sDir">Root folder</param>
+		/// <returns>list of all the files inside the directory and sub-directory</returns>
 		private List<String> DirSearch( string sDir )
 		{
+			// create the files list
 			List<String> files = new List<String>();
+
 			try
 			{
+				// add all the files in the directory
 				foreach ( string f in Directory.GetFiles( sDir ) )
-				{
 					files.Add( f );
-				}
+
+				// add all the files of all the sub-directories
 				foreach ( string d in Directory.GetDirectories( sDir ) )
-				{
 					files.AddRange( DirSearch( d ) );
-				}
 			}
 			catch ( System.Exception excpt )
 			{
@@ -1775,6 +2381,52 @@ namespace Mythic.Package.Editor
 			}
 
 			return files;
+		}
+
+		/// <summary>
+		/// stop the search process
+		/// </summary>
+        private void btnStopSearch_Click( object sender, EventArgs e )
+        {
+			// toggle the stop search flag
+			stopSearch = true;
+
+			// toggle the stop search button availability
+			btnStopSearch.Enabled = !stopSearch;
+		}
+
+		/// <summary>
+		/// locate a specific file inside the treeview
+		/// </summary>
+		/// <param name="f">File to locate</param>
+		private void LocateFileInList( MythicPackageFile f )
+        {
+			// search the files for all opened packages
+			for ( int i = 0; i < TreeView.Nodes.Count; i++ )
+			{
+				// get the package node
+				TreeNode node = TreeView.Nodes[ i ];
+
+				// is this a package node?
+				if ( node.Tag is MythicPackage && node.Tag == f.Parent.Parent )
+				{
+					// expand the tree node
+					node.Expand();
+
+					// select the block
+					TreeView.SelectedNode = node.Nodes[f.Parent.Index];
+
+					// reset the selection
+					ListBox.SelectedIndex = -1;
+
+					// select the reult file
+					if ( f.Index < ListBox.Items.Count )
+						ListBox.SelectedIndex = f.Index;
+
+					// update the file name in the list
+					ListBox.Items[ListBox.SelectedIndex] = Path.GetFileName( f.FileName );
+				}
+			}
 		}
 	}
 }

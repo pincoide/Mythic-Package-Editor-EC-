@@ -42,9 +42,11 @@
 	<entry key="MainMenu_ToolBarToolTip_DictionarySave">Save dictionary</entry>
 	<entry key="MainMenu_ToolBarToolTip_DictionaryMerge">Merge current dictionary with another</entry>
 	<entry key="MainMenu_ToolBarToolTip_Add">Add new file to selected Package</entry>
+  <entry key="MainMenu_ToolBarToolTip_AddFolder">Add folder to selected Package</entry>
 	<entry key="MainMenu_ToolBarToolTip_Remove">Remove block or a file from Package</entry>
 	<entry key="MainMenu_ToolBarToolTip_Unpack">Unpack selected item</entry>
 	<entry key="MainMenu_ToolBarToolTip_Replace">Replace selected file in the Package</entry>
+  <entry key="MainMenu_ToolBarToolTip_ReplaceFolder">Replace existing files in the archive with the one from a selected folder (and sub-folders)</entry>
 
 
 	<!-- Package tab -->
@@ -132,11 +134,11 @@
 	<entry key="SaveFileDialog_Dictionary_Title">Save Dictionary</entry>
 
 	<!-- Save Options dialog -->
-	<entry key="SaveOptions_Title">Save Options</entry>  
+	<entry key="SaveOptions_Title">Save Options</entry>
 	<entry key="SaveOptions_Destination">Destination:</entry>
-	<entry key="SaveOptions_ReleaseDate">Release date:</entry>  
+	<entry key="SaveOptions_ReleaseDate">Release date:</entry>
 	<entry key="SaveOptions_Button_Save">Save</entry>
-	<entry key="SaveOptions_Button_Cancel">Cancel</entry>  
+	<entry key="SaveOptions_Button_Cancel">Cancel</entry>
 	<entry key="SaveOptions_ToolTip_Text">Invalid path!</entry>
 	<entry key="SaveOptions_ToolTip_Title">Error</entry>
 
@@ -150,7 +152,7 @@
 	<entry key="AddFile_Dialog_Title">Select Files</entry>
 	<entry key="AddFile_ToolTip_Text">Invalid file!</entry>
 	<entry key="AddFile_ToolTip_Title">Error</entry>
-	
+
 	<!-- Add File dialog -->
 	<entry key="AddFolder_Title">Add Folder</entry>
 	<entry key="AddFolder_File">Folder:</entry>

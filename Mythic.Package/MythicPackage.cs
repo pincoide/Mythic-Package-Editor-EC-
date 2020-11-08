@@ -53,6 +53,16 @@ namespace Mythic.Package
 		public int Block{ get{ return m_Block; } }
 		#endregion
 
+		#region newfile
+		private bool m_IsNewFile;
+
+		/// <summary>
+		/// Indicate if it's a new file or we already knew the name..
+		/// </summary>
+		///
+		public bool NewFile { get { return m_IsNewFile; } }
+		#endregion
+
 		#region File
 		private int m_File;
 
@@ -79,6 +89,19 @@ namespace Mythic.Package
 		{
 			m_Block = block;
 			m_File = file;
+		}
+
+		/// <summary>
+		/// Initializes a new instance.
+		/// </summary>
+		/// <param name="block">Index if block in <see cref="Mythic.Package.MythicPackage.Blocks"/>.</param>
+		/// <param name="file">Index of file in <see cref="Mythic.Package.MythicPackageBlock.Files"/>.</param>
+		/// <param name="newFile">Indicate if this is a new file we've just discovered (true) or we already new the name (false)</param>
+		public SearchResult( int block, int file, bool newFile )
+		{
+			m_Block = block;
+			m_File = file;
+			m_IsNewFile = newFile;
 		}
 		#endregion
 	}
@@ -337,11 +360,19 @@ namespace Mythic.Package
 		/// <returns>Index of the <see cref="Mythic.Package.MythicPackageFile"/> in <see cref="Mythic.Package.MythicPackageBlock.Files"/> table.</returns>
 		public SearchResult SearchExactFileName( string fileName )
 		{
+			// search for the exact file name
 			foreach ( MythicPackageBlock block in m_Blocks )
 				foreach ( MythicPackageFile file in block.Files )
-					if ( file.FileHash == HashDictionary.HashFileName( fileName ) )
-						return new SearchResult( block.Index, file.Index );
+				{
+					// determine if the file name is already known
+					bool noFileName = string.IsNullOrEmpty( file.FileName );
 
+					// did we find the file?
+					if ( file.Search( fileName ) || file.Search( Path.GetFileName( fileName ) ) )
+						return new SearchResult( block.Index, file.Index, noFileName );
+				}
+
+			//SearchHash
 			return SearchResult.NotFound;
 		}
 		#endregion

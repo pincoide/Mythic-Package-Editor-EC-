@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Mythic.Package
 {
@@ -9,6 +11,54 @@ namespace Mythic.Package
 	/// </summary>
 	public class MythicPackageFile
 	{
+		/// <summary>
+		/// Determine a file MIME-Type
+		/// </summary>
+		[DllImport( @"urlmon.dll", CharSet = CharSet.Auto )]
+		private extern static System.UInt32 FindMimeFromData( System.UInt32 pBC, [MarshalAs( UnmanagedType.LPStr )] System.String pwzUrl, [MarshalAs( UnmanagedType.LPArray )] byte[] pBuffer, System.UInt32 cbSize, [MarshalAs( UnmanagedType.LPStr )] System.String pwzMimeProposed, System.UInt32 dwMimeFlags, out System.UInt32 ppwzMimeOut, System.UInt32 dwReserverd );
+
+		/// <summary>
+		/// Dictionary to convert the mime to file extension
+		/// </summary>
+		public static Dictionary<string, string> MimeToExtension =  new Dictionary<string, string>()
+		{
+			{ "application/octet-stream", "bin" },
+			{ "text/xml", "xml" },
+			{ "application/zip", "zip" },
+			{ "image/vnd-ms.dds", "dds" },
+			{ "image/x-targa", "tga" },
+            { "audio/wav", "wav" },
+			{ "audio/mpeg", "mp3" },
+			{ "application/vnd.ms-excel", "xls" },
+			{ "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx" },
+			{ "audio/midi", "mid" },
+			{ "text/html", "html" },
+			{ "application/pdf", "pdf" },
+			{ "font/font-sfnt", "ttf" },
+			{ "font/vnd.ms-opentype", "otf" },
+			{ "application/CDFV2", "cdf" },
+			{ "image/x-tga", "tga" },
+			{ "image/vnd.ms-dds", "dds" },
+			{ "image/pjpeg", "jpg" },
+		};
+
+		/// <summary>
+		/// Byte sequence to recognize extra file types
+		/// </summary>
+		public static Dictionary<byte[], string> MimeFileTypes =  new Dictionary<byte[], string>()
+		{
+			{ new byte[] { 0, 1, 0, 0, 0 }, "font/font-sfnt" }, // TTF
+			{ new byte[] { 79, 84, 84, 79, 0 }, "font/vnd.ms-opentype" }, // OTF
+			{ new byte[] { 255, 251, 48 }, "audio/mpeg" }, // MP3
+			{ new byte[] { 73, 68, 51 }, "audio/mpeg" }, // MP3
+			{ new byte[] { 255, 243, 200 }, "audio/mpeg" }, // MP3
+			{ new byte[] { 255, 243, 192 }, "audio/mpeg" }, // MP3
+			{ new byte[] { 255, 243, 128 }, "audio/mpeg" }, // MP3
+			{ new byte[] { 255, 243, 130 }, "audio/mpeg" }, // MP3
+			{ new byte[] { 0, 0, 10, 0, 0, 0  }, "image/x-tga" }, // tga
+			{ new byte[] { 0, 207, 17, 224, 161, 177, 161, 225  }, "application/CDFV2" }, // cdf
+		};
+
 		#region Size
 		/// <summary>
 		/// Size of the file header.
@@ -139,6 +189,17 @@ namespace Mythic.Package
 			get{ return m_FileName; }
 			set{ m_FileName = value; }
 		}
+
+		private string m_FilePath;
+
+		/// <summary>
+		/// Relative path of the file.
+		/// </summary>
+		public string FilePath
+		{
+			get { return m_FilePath; }
+			set { m_FilePath = value; }
+		}
 		#endregion
 
 		#region SourceFileName
@@ -207,6 +268,10 @@ namespace Mythic.Package
 			if ( m_FileHash != 0 )
 				m_FileName = HashDictionary.Get( m_FileHash, true );
 
+			// store the file path
+			if ( !string.IsNullOrEmpty( m_FileName ) )
+				m_FilePath = m_FileName.Replace( Path.GetFileName( m_FileName ), "" );
+
 			m_DataBlockHash = reader.ReadUInt32();
 
 			short flag = reader.ReadInt16();
@@ -241,6 +306,9 @@ namespace Mythic.Package
 			m_Compression = flag;
 			m_DataBlockLength = 0;
 			m_DataBlockHash = 0;
+
+			// load and verify the file name
+			RefreshFileName();
 		}
 		#endregion
 
@@ -276,13 +344,28 @@ namespace Mythic.Package
 		/// <returns>If <paramref name="keyword"/> is found.</returns>
 		public bool Search( string keyword )
 		{
-			if ( m_FileName != null && m_FileName.Contains( keyword ) )
+			// do we already have this file name?
+			if ( !string.IsNullOrEmpty( m_FileName ) && m_FileName.Contains( keyword ) )
 				return true;
 
+			// is the file hash the same as the keyword hash?
+			if ( m_FileHash == HashDictionary.HashFileName( keyword ) )
+			{
+				// set the file name in the dictionary
+				HashDictionary.Set( m_FileHash, keyword );
+
+				// store the file name
+				m_FileName = keyword;
+
+				return true;
+			}
+
+			// get the file hash
 			string hash = m_FileHash.ToString( "X16" );
 
-			if ( hash.Contains( keyword ) )
-				return true;
+			// is the keyword the correct hash?
+			if ( hash.Contains( keyword )  )
+ 				return true;
 
 			return false;
 		}
@@ -295,10 +378,15 @@ namespace Mythic.Package
 		/// <returns>If <paramref name="keyword"/> equals to <see cref="Mythic.Package.MythicPackageFile.FileHash"/>.</returns>
 		public bool SearchHash( ulong hash, string keyword )
 		{
-			if ( m_FileName == null && m_FileHash == hash )
+			// is the file name missing and the hash is correct?
+			if ( !string.IsNullOrEmpty( m_FileName ) && m_FileHash == hash )
 			{
+				// set the file name in the dictionary
 				HashDictionary.Set( hash, keyword );
+
+				// store the file name
 				m_FileName = keyword;
+
 				return true;
 			}
 
@@ -313,7 +401,7 @@ namespace Mythic.Package
 		/// <returns>If <paramref name="keyword"/> equals to <see cref="Mythic.Package.MythicPackageFile.FileHash"/>.</returns>
 		public bool SearchHash( ulong hash, char[] keyword )
 		{
-			if ( m_FileName == null && m_FileHash == hash )
+			if ( !string.IsNullOrEmpty( m_FileName ) && m_FileHash == hash )
 			{
 				String name = new String( keyword );
 				HashDictionary.Set( hash, name );
@@ -331,8 +419,41 @@ namespace Mythic.Package
 		/// </summary>
 		public void RefreshFileName()
 		{
+			// get the file name from the dictionary
 			m_FileName = HashDictionary.Get( m_FileHash, false );
+
+			// store the file path
+			if ( !string.IsNullOrEmpty( m_FileName ) )
+				m_FilePath = m_FileName.Replace( Path.GetFileName( m_FileName ), "" );
+
+			// verify the file name
+			VerifyFileName();
 		}
+
+		/// <summary>
+		/// Verify if a file name is valid and compatible with the hash.
+		/// </summary>
+		/// <returns></returns>
+		public bool VerifyFileName()
+        {
+			// check the file name if it's valid
+			if ( string.IsNullOrEmpty( m_FileName ) || string.IsNullOrEmpty( Path.GetExtension( m_FileName ) ) )
+			{
+				// remove the broken file name
+				m_FileName = null;
+
+				// remove the broken name from the dictionary
+				HashDictionary.Unset( m_FileHash );
+
+				return false;
+			}
+
+			// is the file name correct with the hash?
+			if ( m_FileHash != HashDictionary.HashFileName( m_FileName ) )
+				return false;
+
+			return true;
+        }
 		#endregion
 
 		#region Replace
@@ -508,28 +629,42 @@ namespace Mythic.Package
 		/// <param name="fullPath">Does it retain KR folder structure.</param>
 		public void Unpack( BinaryReader source, string folder, bool fullPath )
 		{
+			// get the file data
+			byte[] data = Unpack( source );
+
+			// get the file name
 			string fileName = m_FileName;
 
+			// do we have an invalid file name?
 			if ( String.IsNullOrEmpty( fileName ) )
-				fileName = String.Format( "{0}_{1}_{2}.bin", m_Parent.Parent.FileInfo.Name, m_Parent.Index, m_Index );
+            {
+				string mime = GetMimeType( data );
+				// get the file extension to use
+				string extension = MimeToExtension[mime];
 
+				// if we didn't find the extension, we save it as bin
+				if ( string.IsNullOrEmpty( extension ) )
+					extension = "bin";
+
+				// create the file name
+				fileName = String.Format( "{0}_{1}_{2}.{3}", m_Parent.Parent.FileInfo.Name, m_Parent.Index, m_Index, extension );
+			}
+
+			// create the full file path
 			fileName = Path.Combine( folder, fullPath ? fileName : Path.GetFileName( fileName ) );
 
+			// get the file directory
 			string directory = Path.GetDirectoryName( fileName );
 
+			// make sure the directory exist and create it if necessary
 			if ( !Directory.Exists( directory ) )
 				Directory.CreateDirectory( directory );
 
+			// write the file
 			using ( FileStream stream = File.Create( fileName ) )
-			{
 				using ( BinaryWriter writer = new BinaryWriter( stream ) )
-				{
-					byte[] data = Unpack( source );
-
 					if ( data != null )
 						writer.Write( data, 0, (int) m_DecompressedSize );
-				}
-			}
 		}
 
 		/// <summary>
@@ -544,6 +679,15 @@ namespace Mythic.Package
 				using ( BinaryReader source = new BinaryReader( stream ) )
 					return Unpack( source );
 			}
+		}
+
+		/// <summary>
+		/// Unpack the file
+		/// </summary>
+		/// <returns>Binary data from this file.</returns>
+		public byte[] Unpack()
+		{
+			return Unpack( Parent.Parent.FileInfo.FullName );
 		}
 
 		/// <summary>
@@ -582,5 +726,72 @@ namespace Mythic.Package
 			return null;
 		}
 		#endregion
+
+		/// <summary>
+		/// Determine the file MIME-TYPE
+		/// </summary>
+		/// <returns>File MIME-TYPE</returns>
+		public string GetMimeType()
+		{
+			// get the file bytes
+			byte[] data = Unpack();
+
+			return GetMimeType( data );
+		}
+
+		/// <summary>
+		/// Determine the file MIME-TYPE
+		/// </summary>
+		/// <param name="data">File data bytes</param>
+		/// <returns>File MIME-TYPE</returns>
+		public static string GetMimeType( byte[] data )
+		{
+			// default mime type (bin)
+			string DefaultMimeType = "application/octet-stream";
+
+			try
+			{
+				// minimum bytes required to check the file type
+				uint MimeSampleSize = 256;
+
+				// pointer of the mime type
+				uint mimeType;
+
+				// parse the file data to determine the mime type
+				FindMimeFromData( 0, null, data, MimeSampleSize, null, 0, out mimeType, 0 );
+
+				// get the mime pointer
+				IntPtr mimePointer = new IntPtr(mimeType);
+
+				// get the mime type string
+				string mime = Marshal.PtrToStringUni(mimePointer);
+
+				// release the mime pointer
+				Marshal.FreeCoTaskMem( mimePointer );
+
+				// did we fail to get a mime?
+				if ( string.IsNullOrEmpty( mime ) || mime == DefaultMimeType )
+                {
+					// check the known byte sequence
+					foreach( KeyValuePair<byte[], string> k in MimeFileTypes )
+                    {
+						// is this byte sequence the one in the file?
+						if ( data.Take( k.Key.Length ).SequenceEqual( k.Key ) )
+                        {
+							// get the mime type
+							mime = k.Value;
+
+							break;
+						}
+					}
+				}
+
+				return mime ?? DefaultMimeType;
+			}
+			catch
+			{
+				return DefaultMimeType;
+			}
+		}
 	}
 }

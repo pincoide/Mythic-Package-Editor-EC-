@@ -14,7 +14,7 @@ namespace Mythic.Package
 		private static string m_FileName = AppDomain.CurrentDomain.BaseDirectory + "Dictionary.dic";
 
 		/// <summary>
-		/// Default name of the dictionary.
+		/// Default dictionary file name.
 		/// </summary>
 		public static string FileName{ get{ return m_FileName; } }
 		#endregion
@@ -39,7 +39,7 @@ namespace Mythic.Package
 
 		#region NewFileNames
 		private static int m_NewFileNames;
-		
+
 		/// <summary>
 		/// Number of new file names since load. Resets upon save.
 		/// </summary>
@@ -137,7 +137,7 @@ namespace Mythic.Package
 					case 2:
 						ebx += (uint) s[ i + 1 ] << 8;
 						goto case 1;
-					case 1:		
+					case 1:
 						ebx += (uint) s[ i ];
 						break;
 				}
@@ -155,7 +155,7 @@ namespace Mythic.Package
 
 			return ( (ulong) esi << 32 ) | eax;
 		}
-		
+
 		/// <summary>
 		/// Computes KR hash of the <paramref name="s"/>.
 		/// </summary>
@@ -249,7 +249,7 @@ namespace Mythic.Package
 
 		#region Dictionary
 		private static Dictionary<ulong,string> m_Dictionary = new Dictionary<ulong,string>();
-		
+
 		/// <summary>
 		/// Loads dictionary from <paramref name="fileName"/>.
 		/// </summary>
@@ -308,7 +308,7 @@ namespace Mythic.Package
 					writer.Write( (byte) 0 );
 
 					writer.Write( (byte) 1 ); // version
-					
+
 					foreach ( KeyValuePair<ulong,string> kvp in m_Dictionary )
 					{
 						writer.Write( (ulong) kvp.Key );
@@ -323,7 +323,7 @@ namespace Mythic.Package
 					}
 				}
 			}
-			
+
 			m_NewHashes = 0;
 			m_NewFileNames = 0;
 			m_Modified = false;
@@ -368,7 +368,7 @@ namespace Mythic.Package
 						}
 						else
 						{
-							m_Dictionary.Add( hash, name );	
+							m_Dictionary.Add( hash, name );
 
 							m_NewHashes += 1;
 
@@ -432,7 +432,7 @@ namespace Mythic.Package
 			if ( m_Dictionary.ContainsKey( hash ) )
 			{
 				string value = m_Dictionary[ hash ];
-				
+
 				if ( value == null )
 				{
 					m_Dictionary[ hash ] = name;
@@ -448,7 +448,7 @@ namespace Mythic.Package
 				m_Modified = true;
 				m_Dictionary.Add( hash, name );
 			}
-			
+
 			return false;
 		}
 
