@@ -57,8 +57,4 @@
     <Option>data/interface/interfacecore/textures/</Option>
     <Option>data/interface/interfacecore/fonts/</Option>
   </Setting>
-  <Setting>
-    <Name>SettingsPages</Name>
-    <Option>Mythic.Package.Editor.GeneralPage</Option>
-  </Setting>
 </Settings>

@@ -1,7 +1,0 @@
-Version 1.03 - 9.10.2009
-	- Added support for 64 bit os.
-	- Added clear file name button.
-	- Fixed a bug which caused to few files to be recognized.
-	- Fixed a bug with saving folders.
-	- Fixed splash screen.
-	- Updated dictionary.

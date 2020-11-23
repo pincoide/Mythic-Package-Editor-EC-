@@ -83,9 +83,9 @@ namespace Mythic.Package.Editor.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap alert_fw {
+        internal static System.Drawing.Bitmap Alert {
             get {
-                object obj = ResourceManager.GetObject("alert_fw", resourceCulture);
+                object obj = ResourceManager.GetObject("Alert", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -141,6 +141,16 @@ namespace Mythic.Package.Editor.Properties {
         }
         
         /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Icon simile a (Icona).
+        /// </summary>
+        internal static System.Drawing.Icon Icon {
+            get {
+                object obj = ResourceManager.GetObject("Icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Information {
@@ -163,6 +173,16 @@ namespace Mythic.Package.Editor.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap MergeDictionary {
+            get {
+                object obj = ResourceManager.GetObject("MergeDictionary", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap New {
             get {
                 object obj = ResourceManager.GetObject("New", resourceCulture);
@@ -176,6 +196,16 @@ namespace Mythic.Package.Editor.Properties {
         internal static System.Drawing.Bitmap Open {
             get {
                 object obj = ResourceManager.GetObject("Open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap OpenDictionary {
+            get {
+                object obj = ResourceManager.GetObject("OpenDictionary", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -213,9 +243,9 @@ namespace Mythic.Package.Editor.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Replacefolder_fw {
+        internal static System.Drawing.Bitmap Replacefolder {
             get {
-                object obj = ResourceManager.GetObject("Replacefolder_fw", resourceCulture);
+                object obj = ResourceManager.GetObject("Replacefolder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -243,6 +273,16 @@ namespace Mythic.Package.Editor.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap SaveDictionary {
+            get {
+                object obj = ResourceManager.GetObject("SaveDictionary", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Search {
             get {
                 object obj = ResourceManager.GetObject("Search", resourceCulture);
@@ -256,6 +296,16 @@ namespace Mythic.Package.Editor.Properties {
         internal static System.Drawing.Bitmap SearchExpression {
             get {
                 object obj = ResourceManager.GetObject("SearchExpression", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SearchFolder {
+            get {
+                object obj = ResourceManager.GetObject("SearchFolder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

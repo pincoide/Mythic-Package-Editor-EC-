@@ -1,0 +1,22 @@
+﻿[*.cs]
+
+# IDE1006: Stili di denominazione
+dotnet_diagnostic.IDE1006.severity = none
+
+# Default severity for all analyzer diagnostics
+dotnet_analyzer_diagnostic.severity = suggestion
+
+# IDE0055: Correggi formattazione
+dotnet_diagnostic.IDE0055.severity = none
+
+# IDE0011: Aggiungi parentesi graffe
+csharp_prefer_braces = true:none
+
+# IDE0045: Converti nell'espressione condizionale
+dotnet_style_prefer_conditional_expression_over_assignment = true:none
+
+# IDE0058: Il valore dell'espressione non viene mai usato
+csharp_style_unused_value_expression_statement_preference = discard_variable:none
+
+# IDE0050: Converti in tupla
+dotnet_diagnostic.IDE0050.severity = none

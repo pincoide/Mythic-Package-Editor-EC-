@@ -18,13 +18,28 @@
 	<entry key="MainForm_Dictionary_Update_Start">Start</entry>
 	<entry key="MainForm_Dictionary_Update_Attach">Attach</entry>
 	<entry key="MainForm_Dictionary_Update_Detach">Detach</entry>
-
+  <entry key="MainForm_Edit">Edit</entry>
+  <entry key="MainForm_Edit_Settings">Settings</entry>
 	<entry key="MainForm_Help">Help</entry>
 	<entry key="MainForm_Help_About">About</entry>
 	<entry key="MainForm_Button_SearchText">Text</entry>
 	<entry key="MainForm_Button_SearchHash">Hash</entry>
 
-	<entry key="MainForm_SearchBox_ToolTip_MissingBracket">Missing '{0}'!</entry>
+  <!-- Buttons tooltip -->
+  <entry key="MainForm_Button_Folder_Search_ttp">Search for all the files contained inside the selected folder. The selected folder structure will be ADDED to the relative folder you choose.</entry>
+  <entry key="MainForm_Button_Text_Search_ttp">Search for a file name containing the specified text in the currently opened uop files. Write ? to search unknown files.
+
+  Use F3 to search the next result, and SHIFT + F3 for the previous one (while the files list is selected).</entry>
+  <entry key="MainForm_Button_Brute_Search_ttp">Brute force search for file names using one or more patterns: {&lt;start&gt;-&lt;end&gt;}
+    The only allowed characters allowed in the patterns are: 0...9, _, a...z (no spaces allowed).
+    Don't forget to specify the file relative path!
+    example: data/definitions/hues/{aaa-zzz}16{33-77}.bmp</entry>
+  <entry key="MainForm_Button_Stop_Search_ttp">Stop the search in progress.</entry>
+  <entry key="MainForm_Button_Clear_Search_ttp">Clear the current search entry.</entry>
+  <entry key="MainForm_Button_Show_Log_ttp">Open the current events log file.</entry>
+
+  <!-- Search Errors -->
+  <entry key="MainForm_SearchBox_ToolTip_MissingBracket">Missing '{0}'!</entry>
 	<entry key="MainForm_SearchBox_ToolTip_InvalidBracketOrder">Bracket '{' must be before '}'!</entry>
 	<entry key="MainForm_SearchBox_ToolTip_InvalidLength">Length of first part must be the same as second part!</entry>
 	<entry key="MainForm_SearchBox_ToolTip_NullLength">Length of both parts must be greater than 0!</entry>
@@ -34,6 +49,7 @@
 	<entry key="MainForm_SearchBox_ToolTip_Invalid">Invalid expression!</entry>
 	<entry key="MainForm_SearchBox_ToolTip_Title">Error</entry>
 
+  <!-- Toolbar buttons -->
 	<entry key="MainMenu_ToolBarToolTip_New">New Mythic Package file</entry>
 	<entry key="MainMenu_ToolBarToolTip_Open">Open Mythic Package file</entry>
 	<entry key="MainMenu_ToolBarToolTip_Save">Save modified Mythic Package file</entry>
@@ -47,7 +63,7 @@
 	<entry key="MainMenu_ToolBarToolTip_Unpack">Unpack selected item</entry>
 	<entry key="MainMenu_ToolBarToolTip_Replace">Replace selected file in the Package</entry>
   <entry key="MainMenu_ToolBarToolTip_ReplaceFolder">Replace existing files in the archive with the one from a selected folder (and sub-folders)</entry>
-
+  <entry key="MainMenu_ToolBarToolTip_ReplaceFolder_Dialog">Select the folder containing the file to use as replacement.</entry>
 
 	<!-- Package tab -->
 	<entry key="MainForm_PackageTab_Title">Package Details</entry>
@@ -62,7 +78,8 @@
 	<entry key="MainForm_PackageTab_Misc">Misc:</entry>
 	<entry key="MainForm_PackageTab_HeaderSize">Header size:</entry>
 	<entry key="MainForm_PackageTab_BlockSize">Block size:</entry>
-	<entry key="MainForm_PackageTab_FileCount">File count:</entry>
+  <entry key="MainForm_PackageTab_FileCount">File count:</entry>
+  <entry key="MainForm_PackageTab_Unnamed_FileCount">Unknown files count:</entry>
 
 	<!-- Block tab -->
 	<entry key="MainForm_BlockTab_Title">Block Details</entry>
@@ -75,11 +92,17 @@
 	<entry key="MainForm_FileTab_General">General</entry>
 	<entry key="MainForm_FileTab_Filename">Filename:</entry>
 	<entry key="MainForm_FileTab_FileHash">Hash:</entry>
-	<entry key="MainForm_FileTab_DataHash">Data hash:</entry>
+  <entry key="MainForm_FileTab_DataHash">Data hash:</entry>
+  <entry key="MainForm_FileTab_MD5">MD5:</entry>
 	<entry key="MainForm_FileTab_Compression">Compression</entry>
 	<entry key="MainForm_FileTab_CompressionType">Compression tpye:</entry>
 	<entry key="MainForm_FileTab_CompressedSize">Compressed size:</entry>
-	<entry key="MainForm_FileTab_DecompressedSize">Decompressed size:</entry>
+  <entry key="MainForm_FileTab_Global_Index">Global File Index:</entry>
+  <entry key="MainForm_FileTab_Mime_Type">Mime Type:</entry>
+  <entry key="MainForm_FileTab_DecompressedSize">Decompressed size:</entry>
+
+  <!-- Preview tab -->
+  <entry key="MainForm_PreviewTab_Title">File Preview</entry>
 
 	<!-- Messages -->
 	<entry key="MainForm_Confirm_Remove">Are you sure you wan't to remove {0}?</entry>
@@ -87,23 +110,31 @@
 	<entry key="MainForm_Information_SelectPackageBlockFile">You must select package, block or a file before doing this.</entry>
 	<entry key="MainForm_Information_SelectBlockFile">You must select a block or a file before doing this.</entry>
 	<entry key="MainForm_Information_NothingSelected">You must select a Mythic Package before doing this.</entry>
-	<entry key="MainForm_Information_SelectFile">You must select one file before doing this.</entry>
+  <entry key="MainForm_Information_SelectFile">You must select one file before doing this.</entry>
+  <entry key="MainForm_Information_SelectFileMultiple">You can replace only ONE file with this button.</entry>
 	<entry key="MainForm_Information_WorkerBusy">Please wait until task in background is finished.</entry>
 	<entry key="MainForm_Information_WorkerTerminate">A task is running in background. Terminate?</entry>
 	<entry key="MainForm_Information_WorkerError">An error occured. See {0} for details.</entry>
 	<entry key="MainForm_Information_InvalidProcess">Selected process is not valid.</entry>
 	<entry key="MainForm_Information_DictionaryNotChanged">No pending changes were found. Saving is not necessary.</entry>
+  <entry key="MainForm_Confirm_Add_Missing">Do you want to add the files that are NOT currently part of the archive? (if any)
 
-	<entry key="MainForm_Information_ProcessTerminated">Process terminated.</entry>
+	NOTE: the added files will use the same folder structure they have inside the folder you have selected (the main selected folder will be the root).</entry>
+  <entry key="MainForm_Confirm_Add_Missing_Title">Add Files</entry>
+  <entry key="MainForm_Information_Files_Found">New names found : {0} of {1} files with an unknown name.</entry>
+  <entry key="MainForm_Information_Folder_Search_Terminated">Folder Search Terminated. New names found : {0} of {1} files with an unknown name.</entry>
+  <entry key="MainForm_Information_Brute_Search_Terminated">Brute Force Search Terminated. New names found : {0} of {1} files with an unknown name.</entry>
+
+
+  <entry key="MainForm_Information_ProcessTerminated">Process terminated.</entry>
 	<entry key="MainForm_Information_NewFileNames">Found {0} new file names.</entry>
 	<entry key="MainForm_Information_NewHashes">Found {0} new hashes.</entry>
-	<entry key="MainForm_Information_MergingSummary">{0} new hashes and {1} file names in the disctionary.</entry>
+	<entry key="MainForm_Information_MergingSummary">Merging dictionary finished. {0} new hashes and {1} file names in the disctionary.</entry>
 	<entry key="MainForm_Information_LoadingPackages">Loading packages...</entry>
 	<entry key="MainForm_Information_LoadingFinished">Loading finished.</entry>
 	<entry key="MainForm_Information_LoadingDictionary">Loading dictionary...</entry>
 	<entry key="MainForm_Information_DictionaryLoadingFinished">Loading dictionary finished.</entry>
 	<entry key="MainForm_Information_DictionarySavingFinished">Saving dictionary finished.</entry>
-	<entry key="MainForm_Information_DictionaryMergingFinished">Merging dictionary finished.</entry>
 	<entry key="MainForm_Information_UnpackingFinished">Unpacking finished.</entry>
 	<entry key="MainForm_Information_SavingPackage">Saving package...</entry>
 	<entry key="MainForm_Information_SavePackage">Save modified packages?</entry>
@@ -112,16 +143,22 @@
 	<entry key="MainForm_Information_SaveDictionary">There are {0} new hashes and {1} new file names in dictionary. Save changes?</entry>
 	<entry key="MainForm_Information_MergingDictionary">Merging dictionary...</entry>
 	<entry key="MainForm_Information_UnpackingIn">Unpacking in {0}</entry>
-	<entry key="MainForm_Information_SpyingOn">Spying on {0}</entry>
+  <entry key="MainForm_Information_SpyingOn">Spying on {0}</entry>
+  <entry key="MainForm_Information_Spy_File_Found">Spy has found a new file name: {0}</entry>
 	<entry key="MainForm_Information_Searching">Searching! Warning: this may take a while!!!</entry>
 	<entry key="MainForm_Information_SearchExpressionFound">'{0}' file names found.</entry>
 	<entry key="MainForm_Information_SearchFound">'{0}' found.</entry>
 	<entry key="MainForm_Information_SearchNotFound">'{0}' not found.</entry>
 	<entry key="MainForm_Information_ErrorSaving">Error saving settings.</entry>
-	<entry key="MainForm_Information_ErrorUnset">Error removing file name!</entry>
+  <entry key="MainForm_Information_ErrorUnset">Error removing file name!</entry>
+  <entry key="MainForm_Information_ErrorFileInaccessible">The file is not accessible right now. Close the game and try again.</entry>
+  <entry key="MainForm_Information_No_Files_Unnamed">There are no files without a name!</entry>
+  <entry key="MainForm_Information_Folder_Search_Start">Folder search in progress...</entry>
+  <entry key="MainForm_Information_Brute_Search_Start">Brute force in progress (it might take a long time)...</entry>
+  <entry key="MainForm_Information_Refresh">Updating the files list, please wait...</entry>
 
-	<entry key="MainForm_SaveDictionary">Save changes to dictionary?</entry>
 
+  <entry key="MainForm_SaveDictionary">Save changes to dictionary?</entry>
 
 
 	<!-- Open file dialog -->
@@ -145,24 +182,41 @@
 	<!-- Add File dialog -->
 	<entry key="AddFile_Title">Add File</entry>
 	<entry key="AddFile_File">Files:</entry>
-	<entry key="AddFile_InnerDirectory">Inner directory:</entry>
+	<entry key="AddFile_InnerDirectory">Relative Folder:</entry>
 	<entry key="AddFile_Compression">Compression:</entry>
 	<entry key="AddFile_Button_Add">Add</entry>
 	<entry key="AddFile_Button_Cancel">Cancel</entry>
 	<entry key="AddFile_Dialog_Title">Select Files</entry>
-	<entry key="AddFile_ToolTip_Text">Invalid file!</entry>
+  <entry key="AddFile_ToolTip_Text">One or more files are invalid (red)!</entry>
+  <entry key="AddFile_ToolTip_Already_Added">One or more files are already been added (magenta)!</entry>
+  <entry key="AddFile_ToolTip_Already_Exist">One or more files already exist inside the package (orange)!</entry>
 	<entry key="AddFile_ToolTip_Title">Error</entry>
+  <entry key="AddFile_ShowAll">Show All Folders</entry>
+  <entry key="AddFile_ShowAll_ttp">If enabled, shows all know folders instead of just the one used in this file's package.</entry>
 
-	<!-- Add File dialog -->
+
+  <!-- Add Folder dialog -->
 	<entry key="AddFolder_Title">Add Folder</entry>
-	<entry key="AddFolder_File">Folder:</entry>
+	<entry key="AddFolder_Folder">Folder:</entry>
 	<entry key="AddFolder_Compression">Compression:</entry>
 	<entry key="AddFolder_Button_Add">Add</entry>
 	<entry key="AddFolder_Button_Cancel">Cancel</entry>
 	<entry key="AddFolder_ToolTip_Text">Invalid folder!</entry>
 	<entry key="AddFolder_ToolTip_Title">Error</entry>
+  <entry key="AddFolder_Browse_Description">Select the folder to add...</entry>
 
-	<!-- Settings dialog -->
+  <!-- Folder Search dialog -->
+  <entry key="FolderSearch_Folder">Root Folder:</entry>
+  <entry key="FolderSearch_Browse_Description">Select the folder containing the file names to check...</entry>
+  <entry key="FolderSearch_Button_Parse">Parse</entry>
+  <entry key="FolderSearch_ShowAll">Show All Folders</entry>
+  <entry key="FolderSearch_Button_Cancel">Cancel</entry>
+  <entry key="FolderSearch_InnerDirectory">Relative Folder:</entry>
+  <entry key="FolderSearch_ToolTip_Title">Error</entry>
+  <entry key="FolderSearch_ShowAll_ttp">If enabled, shows all know folders instead of just the one used in this file's package.</entry>
+
+
+  <!-- Settings dialog -->
 	<entry key="SettingsDialog_Title">Settings</entry>
 	<entry key="SettingsDialog_Button_Reset">Reset</entry>
 	<entry key="SettingsDialog_Button_Cancel">Cancel</entry>
@@ -173,15 +227,38 @@
 	<entry key="SettingsDialog_GeneralPage_CurrentLanguage">Current language:</entry>
 	<entry key="SettingsDialog_GeneralPage_Unpacking">Unpacking</entry>
 	<entry key="SettingsDialog_GeneralPage_OutputPath">Unpack in:</entry>
-	<entry key="SettingsDialog_GeneralPage_InnerFolder">Unpack with inner folder:</entry>
-	<entry key="SettingsDialog_GeneralPage_InnerFolders">Inner folders:</entry>
+	<entry key="SettingsDialog_GeneralPage_InnerFolder">Unpack with relative folder:</entry>
+	<entry key="SettingsDialog_GeneralPage_InnerFolders">Relative folders:</entry>
 	<entry key="SettingsDialog_GeneralPage_Description">Select destination folder:</entry>
 	<entry key="SettingsDialog_GeneralPage_ErrorTitle">Error</entry>
 	<entry key="SettingsDialog_GeneralPage_ErrorText">Invalid folder</entry>
 
 	<!-- Guess file dialog -->
 	<entry key="GuessFileDialog_Title">Guess File Name</entry>
-	<entry key="GuessFileDialog_Button_Check">Check</entry>
+  <entry key="GuessFileDialog_Button_Brute">Bruteforce</entry>
+  <entry key="GuessFileDialog_Button_Stop">Stop Search</entry>
 	<entry key="GuessFileDialog_Button_Cancel">Cancel</entry>
-	<entry key="GuessFileDialog_InvalidName">Wrong file name!</entry>
+  <entry key="GuessFileDialog_InvalidName">Wrong file name!</entry>
+  <entry key="GuessFileDialog_FileHash">File Hash: {0}</entry>
+  <entry key="GuessFileDialog_TypedHash">Typed Hash: {0}</entry>
+  <entry key="GuessFileDialog_Search">Search in progress...</entry>
+  <entry key="GuessFileDialog_Type">Type the file name. When you type the correct name the dialog will close automatically!</entry>
+  <entry key="GuessFileDialog_ErrorTitle">Error</entry>
+  <entry key="GuessFileDialog_ShowAll">Show All Folders</entry>
+  <entry key="GuessFileDialog_ShowAll_ttp">If enabled, shows all know folders instead of just the one used in this file's package.</entry>
+
+  <!-- Select process dialog -->
+  <entry key="SelectProcessDialog_Button_Cancel">Cancel</entry>
+  <entry key="SelectProcessDialog_Button_OK">OK</entry>
+  <entry key="SelectProcessDialog_Button_Refresh">Refresh</entry>
+
+
+  <!-- Brute Force exceptions -->
+  <entry key="BruteForce_Exception_IncompletePatterns">Make sure the patter is {&lt;start&gt;-&lt;end&gt;}.
+    The only allowed characters allowed in the patterns are: 0...9, _, a...z (no spaces allowed).</entry>
+  <entry key="BruteForce_Exception_MismatchLength">Both start and end patterns ({&lt;start&gt;-&lt;end&gt;}) need to have the same amount of characters and be different from each other.</entry>
+  <entry key="BruteForce_Exception_InvalidCharacters">The only allowed characters in the pattern are: 0...9, _, a...z (no spaces allowed).</entry>
+  <entry key="BruteForce_Exception_EndMustBeGreaterThanStart">The starting pattern must be smaller than the ending one.</entry>
+  <entry key="BruteForce_Exception_StartAndEndAreTheSame">The starting and ending patterns must be different.</entry>
+
 </Language>

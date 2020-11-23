@@ -1,166 +1,166 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Mythic.Package
 {
-	/// <summary>
-	/// Class describing .uop file header.
-	/// </summary>
-	public class MythicPackageHeader
-	{
-		#region SupportedVersion
-		/// <summary>
-		/// Supported version.
-		/// </summary>
-		public static int SupportedVersion{ get{ return 5; } }
-		#endregion
+    /// <summary>
+    /// Class describing .uop file header.
+    /// </summary>
+    public class MythicPackageHeader
+    {
+        // --------------------------------------------------------------
+        #region PUBLIC VARIABLES
+        // --------------------------------------------------------------
 
-		#region DefaultMisc
-		/// <summary>
-		/// Default misc value.
-		/// </summary>
-		public static uint DefaultMisc{ get{ return 0xFD23EC43; } }
-		#endregion
+        // --------------------------------------------------------------
+        #region STATIC VARIABLES
+        // --------------------------------------------------------------
 
-		#region DefaultStartAddress
-		/// <summary>
-		/// Default start address.
-		/// </summary>
-		public static ulong DefaultStartAddress{ get{ return 0x200; } }
-		#endregion
+        /// <summary>
+        /// Supported version.
+        /// </summary>
+        public static int SupportedVersion => 5;
 
-		#region DefaultBlockSize
-		/// <summary>
-		/// Default <see cref="Mythic.Package.MythicPackageHeader.BlockSize"/>.
-		/// </summary>
-		public static int DefaultBlockSize{ get{ return 1000; } }
-		#endregion
+        /// <summary>
+        /// Default misc value.
+        /// </summary>
+        public static uint DefaultMisc => 0xFD23EC43;
 
-		#region Version
-		private int m_Version;
+        /// <summary>
+        /// Default start address.
+        /// </summary>
+        public static ulong DefaultStartAddress => 0x200;
 
-		/// <summary>
-		/// Version of .uop format.
-		/// </summary>
-		public int Version
-		{
-			get{ return m_Version; }
-			set{ m_Version = value; }
-		}
-		#endregion
+        /// <summary>
+        /// Default <see cref="BlockSize"/>.
+        /// </summary>
+        public static int DefaultBlockSize => 1000;
 
-		#region Misc
-		private uint m_Misc;
+        #endregion
 
-		/// <summary>
-		/// Probably format release date and time
-		/// </summary>
-		public uint Misc
-		{
-			get{ return m_Misc; }
-			set{ m_Misc = value; }
-		}
-		#endregion
+        /// <summary>
+        /// Version of .uop format.
+        /// </summary>
+        public int Version { get; set; }
 
-		#region StartAddress
-		private ulong m_StartAddress;
+        /// <summary>
+        /// Probably format release date and time
+        /// </summary>
+        public uint Misc { get; set; }
 
-		/// <summary>
-		/// Start of the first <see cref="Mythic.Package.MythicPackageBlock"/>.
-		/// </summary>
-		public ulong StartAddress
-		{
-			get{ return m_StartAddress; }
-			set{ m_StartAddress = value; }
-		}
-		#endregion
+        /// <summary>
+        /// Start of the first <see cref="MythicPackageBlock"/>.
+        /// </summary>
+        public ulong StartAddress { get; set; }
 
-		#region BlockSize
-		private int m_BlockSize;
+        /// <summary>
+        /// Maximum amount of files that one <see cref="MythicPackageBlock"/> can hold.
+        /// </summary>
+        public int BlockSize { get; set; }
 
-		/// <summary>
-		/// Maximum amount of files that one <see cref="Mythic.Package.MythicPackageBlock"/> can hold.
-		/// </summary>
-		public int BlockSize
-		{
-			get{ return m_BlockSize; }
-			set{ m_BlockSize = value; }
-		}
-		#endregion
+        /// <summary>
+        /// Number if files in this .uop file.
+        /// </summary>
+        public int FileCount { get; set; }
 
-		#region FileCount
-		private int m_FileCount;
+        #endregion
 
-		/// <summary>
-		/// Number if files in this .uop file.
-		/// </summary>
-		public int FileCount
-		{
-			get{ return m_FileCount; }
-			set{ m_FileCount = value; }
-		}
-		#endregion
+        // --------------------------------------------------------------
+        #region CONSTRUCTOR
+        // --------------------------------------------------------------
 
-		#region Constructors
-		/// <summary>
-		/// Creates a new instance.
-		/// </summary>
-		public MythicPackageHeader( int version )
-		{
-			m_Version = version;
-			m_Misc = DefaultMisc;
-			m_StartAddress = DefaultStartAddress;
-			m_BlockSize = DefaultBlockSize;
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        public MythicPackageHeader( int version )
+        {
+            // set the version
+            Version = version;
 
-			m_FileCount = 0;
-		}
+            // use the default unknown value
+            Misc = DefaultMisc;
 
-		/// <summary>
-		/// Creates a new instance from <paramref name="reader"/>.
-		/// </summary>
-		/// <param name="reader">Binary file (.uop source).</param>
-		public MythicPackageHeader( BinaryReader reader )
-		{
-			byte[] id = reader.ReadBytes( 4 );
+            // use the default start address
+            StartAddress = DefaultStartAddress;
 
-			if ( id[ 0 ] != 'M' || id[ 1 ] != 'Y' || id[ 2 ] != 'P' || id[ 3 ] != 0 )
-				throw new FormatException( "This is not a Mythic Package file!" );
+            // use the default block size
+            BlockSize = DefaultBlockSize;
 
-			m_Version = reader.ReadInt32();
+            // initialize the files cound at 0
+            FileCount = 0;
+        }
 
-			if ( m_Version > SupportedVersion )
-				throw new FormatException( "Unsupported version!" );
+        /// <summary>
+        /// Creates a new instance from <paramref name="reader"/>.
+        /// </summary>
+        /// <param name="reader">Binary file (.uop source).</param>
+        public MythicPackageHeader( BinaryReader reader )
+        {
+            // get the initial 4 bytes
+            byte[] id = reader.ReadBytes( 4 );
 
-			m_Misc = reader.ReadUInt32();
-			m_StartAddress = reader.ReadUInt64();
+            // UOP packages always starts with MYP0, if the file doesn't have it, we throw an exception.
+            if ( id[0] != 'M' || id[1] != 'Y' || id[2] != 'P' || id[3] != 0 )
+                throw new FormatException( "This is not a Mythic Package file!" );
 
-			m_BlockSize = reader.ReadInt32();
-			m_FileCount = reader.ReadInt32();
-		}
-		#endregion
+            // get the file version
+            Version = reader.ReadInt32();
 
-		#region Save
-		/// <summary>
-		/// Saves .uop header to <paramref name="writer"/>.
-		/// </summary>
-		/// <param name="writer">Binary file (.uop destination).</param>
-		public void Save( BinaryWriter writer )
-		{
-			writer.Write( (byte) 'M' );
-			writer.Write( (byte) 'Y' );
-			writer.Write( (byte) 'P' );
-			writer.Write( (byte) 0 );
+            // is this version supported? if not, we throw an exception
+            if ( Version > SupportedVersion )
+                throw new FormatException( "Unsupported version!" );
 
-			writer.Write( m_Version );
-			writer.Write( m_Misc );
-			writer.Write( m_StartAddress );
-			writer.Write( m_BlockSize );
-			writer.Write( m_FileCount );
+            // get the unknown value
+            Misc = reader.ReadUInt32();
 
-			while ( (ulong) writer.BaseStream.Position < m_StartAddress )
-				writer.Write( (byte) 0x0 );
-		}
-		#endregion
-	}
+            // get the first block address location
+            StartAddress = reader.ReadUInt64();
+
+            // get the default block size
+            BlockSize = reader.ReadInt32();
+
+            // get the files count
+            FileCount = reader.ReadInt32();
+        }
+
+        #endregion
+
+        // --------------------------------------------------------------
+        #region PUBLIC FUNCTIONS
+        // --------------------------------------------------------------
+
+        /// <summary>
+        /// Saves .uop header to <paramref name="writer"/>.
+        /// </summary>
+        /// <param name="writer">Binary file (.uop destination).</param>
+        public void Save( BinaryWriter writer )
+        {
+            // write MYP0 in the first 4 bytes
+            writer.Write( (byte)'M' );
+            writer.Write( (byte)'Y' );
+            writer.Write( (byte)'P' );
+            writer.Write( (byte)0 );
+
+            // write the version
+            writer.Write( Version );
+
+            // write the unknown value
+            writer.Write( Misc );
+
+            // write the first block start address
+            writer.Write( StartAddress );
+
+            // write the default block size
+            writer.Write( BlockSize );
+
+            // write the files count
+            writer.Write( FileCount );
+
+            // write 0 in each bytes from the current position to the start address of the first block
+            while ( (ulong)writer.BaseStream.Position < StartAddress )
+                writer.Write( (byte)0x0 );
+        }
+
+        #endregion
+    }
 }
