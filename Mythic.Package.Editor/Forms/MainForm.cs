@@ -870,11 +870,10 @@ namespace Mythic.Package.Editor
             UnpackMythicPackageArgs args = null;
 
             // do we have to extract multiple files?
-            if ( files.Count > 0 )
+            if ( files != null && files.Count > 0 )
             {
                 // do we have any file to unpack? if we do, we start unpacking
-                if ( files.Count > 0 )
-                    args = new UnpackMythicPackageArgs( files.ToArray(), path, innerPath );
+                args = new UnpackMythicPackageArgs( files.ToArray(), path, innerPath );
             }
             // do we have a block/uop file selected?
             else if ( selectedBlock != null )
