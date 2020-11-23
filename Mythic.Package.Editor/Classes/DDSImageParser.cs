@@ -31,7 +31,7 @@ namespace Mythic.Package.Editor
             if ( !ddsImage.CanRead ) return;
 
             using BinaryReader reader = new BinaryReader( ddsImage );
-                Parse( reader );
+            Parse( reader );
         }
 
         private DDSImage( System.Drawing.Bitmap bitmap )
@@ -285,7 +285,7 @@ namespace Mythic.Package.Editor
                     }
                 }
 
-                blocksize = header.width * header.height * header.depth * ( header.pixelformat.rgbbitcount >> 3 ) ;
+                blocksize = header.width * header.height * header.depth * ( header.pixelformat.rgbbitcount >> 3 );
             }
 
             return format;
@@ -584,8 +584,8 @@ namespace Mythic.Package.Editor
                 //float: 1 sign bit, 8 exponent bits, 23 mantissa bits
                 //half: 1 sign bit, 5 exponent bits, 10 mantissa bits
                 *dest++ = HalfToFloat( *src++ );
-                * (float*)dest++  = 1.0f;
-                * (float*)dest++  = 1.0f;
+                *(float*)dest++ = 1.0f;
+                *(float*)dest++ = 1.0f;
             }
         }
 
@@ -1380,7 +1380,7 @@ namespace Mythic.Package.Editor
                                     // only put pixels out < width or height
                                     if ( ( ( x + i ) < width ) && ( ( y + j ) < height ) )
                                     {
-                                        uint offset = (uint)( ( z * sizeofplane ) + ( (y + j ) * bps ) + ( ( x + i ) * bpp ) );;
+                                        uint offset = (uint)( ( z * sizeofplane ) + ( (y + j ) * bps ) + ( ( x + i ) * bpp ) ); ;
                                         rawData[offset + 0] = col.red;
                                         rawData[offset + 1] = col.green;
                                         rawData[offset + 2] = col.blue;

@@ -1192,7 +1192,6 @@
             this.txtPreview.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtPreview.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPreview.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtPreview.IsReplaceMode = false;
             this.txtPreview.Language = FastColoredTextBoxNS.Language.Lua;
             this.txtPreview.LeftBracket = '(';

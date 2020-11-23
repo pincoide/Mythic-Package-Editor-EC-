@@ -687,10 +687,10 @@ namespace Mythic.Package
         public string[] GetAllPaths()
         {
             // get a list of all the unique paths inside thie package
-            return    ( from b in Blocks
-                        from f in b.Files
-                        where !string.IsNullOrEmpty( f.FileName )
-                        select f.FilePath ).Distinct().ToArray();
+            return ( from b in Blocks
+                     from f in b.Files
+                     where !string.IsNullOrEmpty( f.FileName )
+                     select f.FilePath ).Distinct().ToArray();
         }
 
         /// <summary>

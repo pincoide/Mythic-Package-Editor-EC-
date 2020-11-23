@@ -64,16 +64,16 @@ namespace Mythic.Package
         // --------------------------------------------------------------
 
         /// <summary>
-        /// 64bit version of the dll
-        /// </summary>
-        [DllImport( "Zlib64", EntryPoint = "zlibVersion" )]
-        private static extern string ZlibVersion64();
-
-        /// <summary>
         /// 32bit version of the dll
         /// </summary>
         [DllImport( "Zlib32", EntryPoint = "zlibVersion" )]
         private static extern string ZlibVersion();
+
+        /// <summary>
+        /// 64bit version of the dll
+        /// </summary>
+        [DllImport( "Zlib64", EntryPoint = "zlibVersion" )]
+        private static extern string ZlibVersion64();
 
         #endregion
 
@@ -86,7 +86,7 @@ namespace Mythic.Package
         /// </summary>
         public static string Version => Environment.Is64BitProcess ? ZlibVersion64() : ZlibVersion();
 
-#if WIN32
+
         // --------------------------------------------------------------
         #region 32 BIT
         // --------------------------------------------------------------
@@ -127,7 +127,6 @@ namespace Mythic.Package
 
         #endregion
 
-#else
         // --------------------------------------------------------------
         #region 64 BIT
         // --------------------------------------------------------------
@@ -167,7 +166,7 @@ namespace Mythic.Package
         private static extern ZLibError Compress64( byte[] dest, ref int destLen, byte[] source, int sourceLen, ZLibQuality quality );
 
         #endregion
-#endif
+
         #endregion
 
         // --------------------------------------------------------------
@@ -199,13 +198,10 @@ namespace Mythic.Package
         /// <returns>Error</returns>
         public static ZLibError Unzip( byte[] dest, ref int destLength, byte[] source, int sourceLength )
         {
-#if !WIN32
-            // use the 64bit dll to decompress
-            return Uncompress64( dest, ref destLength, source, sourceLength );
-#else
-            // use the 32bit dll to decompress
-            return Uncompress( dest, ref destLength, source, sourceLength );
-#endif
+            // use the 32/64bit dll to decompress
+            return Environment.Is64BitProcess
+                ? Uncompress64( dest, ref destLength, source, sourceLength )
+                : Uncompress( dest, ref destLength, source, sourceLength );
         }
 
         /// <summary>
@@ -252,26 +248,20 @@ namespace Mythic.Package
             // is the compress request at default quality?
             if ( quality == ZLibQuality.Default )
             {
-#if !WIN32
-                // use the 64bit dll to compress
-                return Compress64( dest, ref destLength, source, sourceLength );
-#else
-                // use the 32bit dll to compress
-                return Compress( dest, ref destLength, source, sourceLength );
-#endif
+                // use the 32/64bit dll to compress
+                return Environment.Is64BitProcess
+                    ? Compress64( dest, ref destLength, source, sourceLength )
+                    : Compress( dest, ref destLength, source, sourceLength );
             }
-            else
+            else // quality specified?
             {
-#if !WIN32
-                // use the 64bit dll to compress
-                return Compress64( dest, ref destLength, source, sourceLength, quality );
-#else
-                // use the 32bit dll to compress
-                return Compress( dest, ref destLength, source, sourceLength, quality );
-#endif
+                // use the 32/64bit dll to compress
+                return Environment.Is64BitProcess
+                    ? Compress64( dest, ref destLength, source, sourceLength, quality )
+                    : Compress( dest, ref destLength, source, sourceLength, quality );
             }
         }
 
-#endregion
+        #endregion
     }
 }

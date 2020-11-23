@@ -2,15 +2,15 @@
 
 namespace Mythic.Package.Editor
 {
-	public partial class About : Form
-	{
-		public About()
-		{
-			// initialize the components
-			InitializeComponent();
+    public partial class About : Form
+    {
+        public About()
+        {
+            // initialize the components
+            InitializeComponent();
 
-			// set the version
-			lblVersionInfo.Text = Application.ProductVersion;
-		}
-	}
+            // set the version
+            lblVersionInfo.Text = Application.ProductVersion;
+        }
+    }
 }
