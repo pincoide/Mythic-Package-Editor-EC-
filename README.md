@@ -10,6 +10,6 @@ Now it includes:
 - Mass replace feature.
 - Improved interface.
 - More info, and text/image preview (without unpacking).
-- Cleaner code, and tons of bug fixed.
+- Cleaner code, and tons of bugs fixed.
 
-If you have any idea on how to fix/improve the tool, feel free to contact me on discord: Pinco#5969
+If you have any idea for improvements or feebacks, feel free to contact me on discord: Pinco#5969
