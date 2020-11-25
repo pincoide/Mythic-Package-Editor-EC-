@@ -342,6 +342,9 @@
     <Error Condition="!Exists('..\packages\Fody.6.3.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.3.0\build\Fody.targets'))" />
     <Error Condition="!Exists('..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>del "$(TargetDir)Mythic.Package.Spy.xml", "$(TargetDir)Mythic.Package.Spy.pdb", "$(TargetDir)Mythic.Package.xml", "$(TargetDir)Mythic.Package.pdb", "$(TargetDir)FastColoredTextBox.xml", "$(TargetDir)Editor.exe.config"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
