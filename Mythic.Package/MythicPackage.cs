@@ -732,13 +732,13 @@ namespace Mythic.Package
         private string GetRelativePath( string root, string filename )
         {
             // remove the file name from the path
-            string relativePath = filename.Replace( Path.GetFileName(filename), "" );
+            string relativePath = filename.Replace( Path.GetFileName( filename ), "" ).ToLower();
 
             // remove the root folder
-            relativePath = relativePath.Replace( root + "\\", "" );
+            relativePath = relativePath.Replace( root.ToLower() + @"\", "" );
 
             // invert the \ from the path
-            relativePath = relativePath.Replace( "\\", "/" );
+            relativePath = relativePath.Replace( @"\", "/" );
 
             return relativePath;
         }

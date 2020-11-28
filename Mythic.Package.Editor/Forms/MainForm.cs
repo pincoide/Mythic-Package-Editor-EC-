@@ -2079,6 +2079,10 @@ namespace Mythic.Package.Editor
             // create the array for the header labels
             string[] headerLabels = header.Split( ',' );
 
+            // if we have less than 2 headers, it's not a csv
+            if ( headerLabels.Length < 2 )
+                return false;
+
             // create all columns for the table
             foreach ( string headerWord in headerLabels )
                 dt.Columns.Add( new DataColumn( headerWord ) );
@@ -2787,23 +2791,30 @@ namespace Mythic.Package.Editor
         /// <summary>
         /// Convert the bytes in KB/MB/etc..
         /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
+        /// <param name="bytes">size to measure</param>
+        /// <returns>human readable bytes size</returns>
         private string ConvertSize( long bytes )
         {
-            // the bytes are more than 1kb?
-            if ( bytes >= 1024 )
-            {
-                // store the value
-                double value = bytes / (double) 1024;
+            // all possible sizes
+            string[] suffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
-                // calculate if we have more than 1 MB (and how many) or just return the KB
-                return value >= 1024
-                    ? string.Format( "{0} MB", ( value /= 1024 ).ToString( "F2" ) )
-                    : string.Format( "{0} KB", value.ToString( "F2" ) );
+            // initialize the index of the suffix to use
+            int s = 0;
+
+            // current size value
+            double size = bytes;
+
+            // keep going until the number is no longer divisible by 1024
+            while ( size >= 1024 )
+            {
+                // increase the index
+                s++;
+
+                // divide the size by 1024
+                size /= 1024;
             }
 
-            return string.Format( "{0} B", bytes );
+            return string.Format( "{0} {1}", size.ToString( "F2" ), suffixes[s] );
         }
 
         /// <summary>
