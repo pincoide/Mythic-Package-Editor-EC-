@@ -1630,6 +1630,10 @@ namespace Mythic.Package.Editor
             // clear all tabs
             ClearAllTabs();
 
+            // no package? we can get out
+            if ( package == null )
+                return;
+
             // enable the package tab and disable the rest
             tabDetailsPackage.Enabled = true;
 
@@ -1800,14 +1804,23 @@ namespace Mythic.Package.Editor
         /// </summary>
         private void RefreshBlocks()
         {
-            // flag that the refresh is in progress
-            RefreshInProgess = true;
-
             // update the status with the new operation
             ShowInfo( Globals.LanguageManager.GetString( "MainForm_Information_Refresh" ), false );
 
             // currently selected UOP
             MythicPackage selectedUOP = GetSelectedPackage( out TreeNode root );
+
+            // nothing selected? we can get out
+            if ( selectedUOP == null )
+            {
+                // clear the status
+                ShowInfo( string.Empty, false );
+
+                return;
+            }
+
+            // flag that the refresh is in progress
+            RefreshInProgess = true;
 
             // currently selected block
             MythicPackageBlock selectedBlock = GetSelectedBlock();
