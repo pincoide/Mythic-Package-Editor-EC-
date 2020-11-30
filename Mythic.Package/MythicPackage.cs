@@ -437,7 +437,8 @@ namespace Mythic.Package
         /// <param name="rootDir">Root directory of the file structure. Used to create the relative path for the files to add. Only necessary if <paramref name="addMissing"/> is true.</param>
         /// <param name="addMissing">Do we need to add the files that are not present in the current package?</param>
         /// <param name="flag">Compression type.</param>
-        public void ReplaceFiles( List<string> filesList, string rootDir = "", bool addMissing = false, CompressionFlag flag = CompressionFlag.Zlib )
+        /// <param name="backupFolder">if a backup folder is specified, all files that needs replacing will be extracted there first.</param>
+        public void ReplaceFiles( List<string> filesList, string rootDir = "", bool addMissing = false, CompressionFlag flag = CompressionFlag.Zlib, string backupFolder = null )
         {
             // create a queue for the files
             Queue<string> q = new Queue<string>(filesList);
@@ -456,7 +457,14 @@ namespace Mythic.Package
 
                 // if we found a file, we execute the replace
                 if ( found != null )
+                {
+                    // if a backup is required, we unpack the current file first
+                    if ( !string.IsNullOrEmpty( backupFolder ) )
+                        found.Unpack( backupFolder, true );
+
+                    // replace the file
                     found.Replace( currFile, found.FilePath, flag );
+                }
 
                 // if the file doesn't exit, we add it to the archive (if addMissing is true)
                 else if ( addMissing )

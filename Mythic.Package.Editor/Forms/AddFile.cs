@@ -299,7 +299,7 @@ namespace Mythic.Package.Editor
             // check if the file already exist inside the package
             List<MythicPackageFile> existing = ( from b in PackageToAddTo.Blocks
                                                  from f in b.Files
-                                                 where !string.IsNullOrEmpty( f.FileName ) && Path.GetFileName( txt ) == Path.GetFileName( f.FileName ) && f.FilePath == InnerDirectory.Replace( '\\', '/' )
+                                                 where !string.IsNullOrEmpty( f.FileName ) && Path.GetFileName( txt ) == Path.GetFileName( f.FileName ) && f.FilePath == InnerDirectory.Replace( '\\', '/' ) && !f.Equals( FileToReplace )
                                                  select f ).ToList();
 
             // if the file already exist in the package, we mark it in orange
@@ -343,7 +343,7 @@ namespace Mythic.Package.Editor
             List<MythicPackageFile> existing = ( from ff in Files
                                                  from b in PackageToAddTo.Blocks
                                                  from f in b.Files
-                                                 where !string.IsNullOrEmpty( f.FileName ) && Path.GetFileName( ff ) == Path.GetFileName( f.FileName ) && f.FilePath == InnerDirectory.Replace( '\\', '/' )
+                                                 where !string.IsNullOrEmpty( f.FileName ) && Path.GetFileName( ff ) == Path.GetFileName( f.FileName ) && f.FilePath == InnerDirectory.Replace( '\\', '/' ) && !f.Equals( FileToReplace )
                                                  select f ).ToList();
 
             // check if the file has already been added

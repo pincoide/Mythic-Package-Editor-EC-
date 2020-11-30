@@ -1541,6 +1541,9 @@ namespace Mythic.Package.Editor
 
             // the stop search is enabled when the async thread is busy and the search progress flag is active
             btnStopSearch.Enabled = Worker.IsBusy && SearchInProgess && !RefreshInProgess;
+
+            // only visible on the preview page
+            lblImageFormat.Visible = tabsData.SelectedTab == tabPreview;
         }
 
         /// <summary>
@@ -1953,6 +1956,9 @@ namespace Mythic.Package.Editor
 
             // hide the csv preview
             dgvPreview.Visible = false;
+
+            // clear the image format
+            lblImageFormat.Text = string.Empty;
         }
 
         /// <summary>
@@ -2154,7 +2160,10 @@ namespace Mythic.Package.Editor
             {
                 // read the image data and show it
                 using MemoryStream mStream = new MemoryStream( data );
-                picPreview.Image = new Bitmap( mStream );
+                    picPreview.Image = new Bitmap( mStream );
+
+                // get the pixel format
+                lblImageFormat.Text = picPreview.Image.RawFormat.Equals( ImageFormat.Jpeg ) ? "JPG Image" : ( picPreview.Image.RawFormat.Equals( ImageFormat.Png ) ? "PNG Image" : "" );
 
                 // show the image preview
                 pnlImagePreview.Visible = true;
@@ -2168,6 +2177,9 @@ namespace Mythic.Package.Editor
                 // show the image
                 picPreview.Image = CreateTGAImage( data );
 
+                // get the image format
+                lblImageFormat.Text = "TGA Image";
+
                 // show the image preview
                 pnlImagePreview.Visible = true;
 
@@ -2177,17 +2189,25 @@ namespace Mythic.Package.Editor
             // is this a dds?
             else if ( txtFileMimeInfo.Text == "image/vnd.ms-dds" || ( !string.IsNullOrEmpty( fileName ) && Path.GetExtension( fileName ) == ".dds" ) )
             {
-                // create the dds image
-                DDSImage img = new DDSImage( data );
+                try
+                {
 
-                // show the dds image
-                picPreview.Image = img.BitmapImage;
+                    // create the dds image
+                    DDSImage img = DDSImage.Load( data );
 
-                // show the image preview
-                pnlImagePreview.Visible = true;
+                    // show the dds image
+                    picPreview.Image = img.Images[0];
 
-                // enable the preview tab
-                ShowPreviewTab();
+                    // get the pixel format
+                    lblImageFormat.Text = "DDS " + img.FormatName;
+
+                    // show the image preview
+                    pnlImagePreview.Visible = true;
+
+                    // enable the preview tab
+                    ShowPreviewTab();
+                }
+                catch { }
             }
         }
 

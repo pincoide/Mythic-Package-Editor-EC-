@@ -165,6 +165,7 @@
             this.btnSearchText = new System.Windows.Forms.Button();
             this.btnClearSearch = new System.Windows.Forms.Button();
             this.tmrUIUpdate = new System.Windows.Forms.Timer(this.components);
+            this.lblImageFormat = new System.Windows.Forms.Label();
             this.MainMenu.SuspendLayout();
             this.Status.SuspendLayout();
             this.mnuCopy.SuspendLayout();
@@ -1192,6 +1193,7 @@
             this.txtPreview.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtPreview.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtPreview.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtPreview.IsReplaceMode = false;
             this.txtPreview.Language = FastColoredTextBoxNS.Language.Lua;
             this.txtPreview.LeftBracket = '(';
@@ -1614,11 +1616,23 @@
             this.tmrUIUpdate.Enabled = true;
             this.tmrUIUpdate.Tick += new System.EventHandler(this.tmrUIUpdate_Tick);
             // 
+            // lblImageFormat
+            // 
+            this.lblImageFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblImageFormat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblImageFormat.Location = new System.Drawing.Point(381, 377);
+            this.lblImageFormat.Name = "lblImageFormat";
+            this.lblImageFormat.Size = new System.Drawing.Size(394, 23);
+            this.lblImageFormat.TabIndex = 2;
+            this.lblImageFormat.Text = "Image Format";
+            this.lblImageFormat.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(794, 485);
+            this.Controls.Add(this.lblImageFormat);
             this.Controls.Add(this.btnClearSearch);
             this.Controls.Add(this.MenuToolStrip);
             this.Controls.Add(this.Status);
@@ -1806,6 +1820,7 @@
         private System.Windows.Forms.ToolStripSplitButton btnShowLog;
         private System.Windows.Forms.TextBox txtUnnamedFilesInfo;
         private System.Windows.Forms.Label lblUnnamedFiles;
+        private System.Windows.Forms.Label lblImageFormat;
     }
 }
 
