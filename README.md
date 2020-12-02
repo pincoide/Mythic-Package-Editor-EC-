@@ -12,4 +12,7 @@ Now it includes:
 - More info, and text/image preview (without unpacking).
 - Cleaner code, and tons of bugs fixed.
 
-If you have any idea for improvements or feebacks, feel free to contact me on discord: Pinco#5969
+For feedbacks and support: https://discord.gg/fwH4bWV
+
+
+Next objective: expanding the mythic.package library to add the ability to read/save as many files as possible of the client files (animations, tiledata, statics, etc...). If someone wants to help, let me know.
