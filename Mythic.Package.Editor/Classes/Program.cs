@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
 
 namespace Mythic.Package.Editor
 {
@@ -32,6 +33,10 @@ namespace Mythic.Package.Editor
 
             // enable text rendering
             Application.SetCompatibleTextRenderingDefault( false );
+
+            // create the zlib files
+            File.WriteAllBytes( Path.Combine( Application.StartupPath, "Zlib32.dll" ), Properties.Resources.Zlib32 );
+            File.WriteAllBytes( Path.Combine( Application.StartupPath, "Zlib64.dll" ), Properties.Resources.Zlib64 );
 
             // initialize the app
             Initialize();

@@ -267,7 +267,7 @@ namespace Mythic.Package
 
             // if we found something we can return the result
             if ( idx > -1 )
-                return new SearchResult( bstart, idx );
+                return new SearchResult( bstart, idx, Blocks[bstart].Files[idx] );
 
             // scan all blocks
             foreach ( MythicPackageBlock b in Blocks )
@@ -276,7 +276,7 @@ namespace Mythic.Package
 
                 // if we found something we can return the result
                 if ( idx > -1 )
-                    return new SearchResult( b.Index, idx );
+                    return new SearchResult( b.Index, idx, b.Files[idx] );
             }
 
             // if we got here, we found nothing
@@ -304,7 +304,7 @@ namespace Mythic.Package
 
                 // if we found something we can return the result
                 if ( idx > -1 )
-                    return new SearchResult( b.Index, idx );
+                    return new SearchResult( b.Index, idx, b.Files[idx] );
             }
 
             // if we got here, we found nothing
@@ -321,12 +321,12 @@ namespace Mythic.Package
             // search for the exact file name
             MythicPackageFile found = ( from b in Blocks
                                         from f in b.Files
-                                        where !string.IsNullOrEmpty( f.FileName ) && ( f.Search( fileName ) || f.Search( Path.GetFileName( fileName ) ) )
+                                        where f.FileHash == HashDictionary.HashFileName( fileName )
                                         select f ).FirstOrDefault();
 
             // did we find the file?
             if ( found != null )
-                return new SearchResult( found.Parent.Index, found.Index, HashDictionary.AddedFilenames.Contains( found.FileHash ) );
+                return new SearchResult( found.Parent.Index, found.Index, HashDictionary.AddedFilenames.Contains( found.FileHash ), found );
 
             // if we got here, we found nothing
             return SearchResult.NotFound;

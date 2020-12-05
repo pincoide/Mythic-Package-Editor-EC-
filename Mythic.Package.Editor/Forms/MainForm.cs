@@ -14,6 +14,10 @@ using System.Media;
 using StbImageSharp;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using CSharpImageLibrary;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using Clipboard = System.Windows.Clipboard;
 
 namespace Mythic.Package.Editor
 {
@@ -158,6 +162,27 @@ namespace Mythic.Package.Editor
         {
             // make sure the listbox and treeview height remains the same
             ListBox.Height = TreeView.Height;
+        }
+
+        /// <summary>
+        /// Application exit event
+        /// </summary>
+        private void OnApplicationExit( object sender, EventArgs e )
+        {
+            // start a cmd process to delete the zlib files
+            Process psi = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/C timeout 3 & del /Q \"{ Path.Combine( Application.StartupPath, "Zlib32.dll" ) }\" & del /Q \"{ Path.Combine( Application.StartupPath, "Zlib64.dll" ) }\"",
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }
+            };
+
+            // start the process
+            psi.Start();
         }
 
         #endregion
@@ -1534,10 +1559,10 @@ namespace Mythic.Package.Editor
             btnClearSearch.Enabled = btnSearchText.Enabled = TreeView.Nodes.Count > 0 && !string.IsNullOrEmpty( txtSearchBox.Text ) && !RefreshInProgess;
 
             // the folder search is enabled only if there is a uop file selected and the async thread is NOT busy
-            btnFolderSearch.Enabled = selectedUOP != null && !Worker.IsBusy && !RefreshInProgess;
+            btnFolderSearch.Enabled = selectedUOP != null && int.Parse( txtUnnamedFilesInfo.Text ) > 0 && !Worker.IsBusy && !RefreshInProgess;
 
             // the brute force search is enabled only if there is a uop file selected and a pattern in the textbox and the async thread is NOT busy
-            btnBruteSearch.Enabled = selectedUOP != null && !string.IsNullOrEmpty( txtSearchBox.Text ) && !Worker.IsBusy && !RefreshInProgess;
+            btnBruteSearch.Enabled = selectedUOP != null && int.Parse( txtUnnamedFilesInfo.Text ) > 0 && !string.IsNullOrEmpty( txtSearchBox.Text ) && !Worker.IsBusy && !RefreshInProgess;
 
             // the stop search is enabled when the async thread is busy and the search progress flag is active
             btnStopSearch.Enabled = Worker.IsBusy && SearchInProgess && !RefreshInProgess;
@@ -1576,7 +1601,7 @@ namespace Mythic.Package.Editor
         /// </summary>
         private void CopyMenuStripButton_Click( object sender, EventArgs e )
         {
-            Clipboard.SetText( ( (Label)mnuCopy.Tag ).Text, TextDataFormat.Text );
+            Clipboard.SetText( ( (Label)mnuCopy.Tag ).Text, System.Windows.TextDataFormat.Text );
         }
 
         /// <summary>
@@ -1838,7 +1863,7 @@ namespace Mythic.Package.Editor
             root.Text = selectedUOP.ToString();
 
             // update all block names
-            root.Nodes.Cast<TreeNode>().ToList().ForEach( n => { n.Text = ( (MythicPackageBlock)n.Tag ).ToString(); Application.DoEvents(); } );
+            root.Nodes.Cast<TreeNode>().ToList().ForEach( n => { if ( ( (MythicPackageBlock)n.Tag ).Modified || n.Text.EndsWith( "*" ) ) { n.Text = ( (MythicPackageBlock)n.Tag ).ToString(); } } );
 
             // re-select the block
             if ( selectedBlock != null )
@@ -2191,15 +2216,14 @@ namespace Mythic.Package.Editor
             {
                 try
                 {
-
-                    // create the dds image
-                    DDSImage img = DDSImage.Load( data );
+                    // create the image
+                    ImageEngineImage img = new ImageEngineImage( data );
 
                     // show the dds image
-                    picPreview.Image = img.Images[0];
+                    picPreview.Image = BitmapSource2Bitmap( img.GetWPFBitmap( 0, true ) );
 
                     // get the pixel format
-                    lblImageFormat.Text = "DDS " + img.FormatName;
+                    lblImageFormat.Text = "DDS " + img.Format.ToString().Replace( "DDS_", "" );
 
                     // show the image preview
                     pnlImagePreview.Visible = true;
@@ -2751,6 +2775,9 @@ namespace Mythic.Package.Editor
             // add the hash found event
             Globals.HashSpy.HashFound += new HashFound( HashSpy_HashFound );
 
+            // attach the application exit envet
+            Application.ApplicationExit += new EventHandler( OnApplicationExit );
+
             // reset all tabs
             ClearAllTabs();
         }
@@ -3234,6 +3261,28 @@ namespace Mythic.Package.Editor
 
             // highlight the file in the list
             LocateFileInList( results[m_searchIdx] );
+        }
+
+        /// <summary>
+        /// Convert a BitmapSource to Bitmap
+        /// </summary>
+        /// <param name="source">BitmapSource to convert</param>
+        /// <returns>bitmap image</returns>
+        private Bitmap BitmapSource2Bitmap( BitmapSource source )
+        {
+            // create the new bitmap
+            Bitmap bmp = new Bitmap( source.PixelWidth, source.PixelHeight, PixelFormat.Format32bppPArgb );
+
+            // get the bitmap data for the new image
+            BitmapData data = bmp.LockBits( new Rectangle( System.Drawing.Point.Empty, bmp.Size), ImageLockMode.WriteOnly, PixelFormat.Format32bppPArgb );
+
+            // write the bitmap data from the source
+            source.CopyPixels( Int32Rect.Empty, data.Scan0, data.Height * data.Stride, data.Stride );
+
+            // release the memory
+            bmp.UnlockBits( data );
+
+            return bmp;
         }
 
         #endregion

@@ -12,7 +12,7 @@
         /// <summary>
         /// Seatch result indicating nothing was found.
         /// </summary>
-        public static readonly SearchResult NotFound = new SearchResult( -1, -1 );
+        public static readonly SearchResult NotFound = new SearchResult( -1, -1, null );
 
         /// <summary>
         /// Seatch result indicating nothing was found in the <see cref="MythicPackageBlock"/>.
@@ -34,12 +34,17 @@
         /// <summary>
         /// Index if the file in <see cref="MythicPackageBlock.Files"/>.
         /// </summary>
-        public int File { get; }
+        public int FileIdx { get; }
+
+        /// <summary>
+        /// Actual file that we have found.
+        /// </summary>
+        public MythicPackageFile File { get; }
 
         /// <summary>
         /// Indicates search was successful.
         /// </summary>
-        public bool Found => Block >= 0 && File >= 0;
+        public bool Found => Block >= 0 && FileIdx >= 0;
 
         #endregion
 
@@ -52,10 +57,12 @@
         /// </summary>
         /// <param name="block">Index if block in <see cref="MythicPackage.Blocks"/>.</param>
         /// <param name="file">Index of file in <see cref="MythicPackageBlock.Files"/>.</param>
-        public SearchResult( int block, int file )
+        /// <param name="f">Actual mythic package file that we have found</param>
+        public SearchResult( int block, int file, MythicPackageFile f )
         {
             Block = block;
-            File = file;
+            FileIdx = file;
+            File = f;
         }
 
         /// <summary>
@@ -64,11 +71,13 @@
         /// <param name="block">Index if block in <see cref="MythicPackage.Blocks"/>.</param>
         /// <param name="file">Index of file in <see cref="MythicPackageBlock.Files"/>.</param>
         /// <param name="newFile">Indicate if this is a new file we've just discovered (true) or we already new the name (false)</param>
-        public SearchResult( int block, int file, bool newFile )
+        /// <param name="f">Actual mythic package file that we have found</param>
+        public SearchResult( int block, int file, bool newFile, MythicPackageFile f )
         {
             Block = block;
-            File = file;
+            FileIdx = file;
             NewFile = newFile;
+            File = f;
         }
 
         #endregion
