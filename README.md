@@ -29,31 +29,31 @@ This is the cliloc strings editor, completed for both CC and EC.
 [◼◼◼◼◻] <b>Facet Definition</b>: 
 This is for editing the minimap areas in the client.
 
-<b>DONE:</b> file reading + file writing + edit interface. 
+<b>DONE:</b> file reading + file writing + edit interface.<br>
 <b>TODO:</b> cliloc string picker and tooltip for the selected cliloc.
 
 [◼◼◻◻◻] <b>Map Sector</b>:
 This is for editing the map statics.
 
-<b>DONE:</b> file reading + file writing. 
+<b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
 [◼◼◻◻◻] <b>MultiCollection</b>:
 This is for editing the map statics.
 
-<b>DONE:</b> file reading + file writing. 
+<b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
 [◼◼◻◻◻] <b>String Dictionary</b>:
 This is for some internal file and item names used in the tileart.
 
-<b>DONE:</b> file reading + file writing. 
+<b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
 [◼◼◻◻◻] <b>Tileart</b>:
 This is for editing the items settings (tiledata on CC).
 
-<b>DONE:</b> file reading + file writing. 
+<b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
 [◻◻◻◻◻] <b>Animations</b>:
