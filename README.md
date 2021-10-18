@@ -38,6 +38,12 @@ This is for editing the map statics.
 <b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
+[◼◼◻◻◻] <b>Terrain Definitions</b>:
+This is for editing the data of the ground textures.
+
+<b>DONE:</b> file reading + file writing. <br>
+<b>TODO:</b> editing interface.
+
 [◼◼◻◻◻] <b>MultiCollection</b>:
 This is for editing the map statics.
 
@@ -54,7 +60,7 @@ This is for some internal file and item names used in the tileart.
 This is for editing the items settings (tiledata on CC).
 
 <b>DONE:</b> file reading + file writing. <br>
-<b>TODO:</b> editing interface.
+<b>TODO:</b> editing interface. Determine how to read the final chunk of data unique in 16 files.
 
 [◻◻◻◻◻] <b>Animations</b>:
 This is for editing the creatures and equipment animations
@@ -63,11 +69,6 @@ This is for editing the creatures and equipment animations
 
 [◻◻◻◻◻] <b>Animation Frames</b>:
 This is for editing the creatures and equipment animations
-
-<b>TODO:</b> not started yet.
-
-[◻◻◻◻◻] <b>Terrain Definitions</b>:
-This is for editing the data of the ground textures.
 
 <b>TODO:</b> not started yet.
 
