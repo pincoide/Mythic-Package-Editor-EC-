@@ -60,12 +60,12 @@ This is for some internal file and item names used in the tileart.
 This is for editing the items settings (tiledata on CC).
 
 <b>DONE:</b> file reading + file writing. <br>
-<b>TODO:</b> editing interface. Determine how to read the final chunk of data unique in 16 files.
+<b>TODO:</b> editing interface.
 
-[◻◻◻◻◻] <b>Animations</b>:
+[◼◻◻◻◻] <b>Animations</b>:
 This is for editing the creatures and equipment animations
 
-<b>TODO:</b> not started yet.
+<b>TODO:</b> editing interface and turning an image into a frame.
 
 [◻◻◻◻◻] <b>Animation Frames</b>:
 This is for editing the creatures and equipment animations
