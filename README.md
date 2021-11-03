@@ -45,37 +45,38 @@ This is for editing the data of the ground textures.
 <b>TODO:</b> editing interface.
 
 [◼◼◻◻◻] <b>MultiCollection</b>:
-This is for editing the map statics.
+This is for editing the map statics (same for CC and EC).
 
 <b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
 [◼◼◻◻◻] <b>String Dictionary</b>:
-This is for some internal file and item names used in the tileart.
+This is for some internal file and item names used in the tileart (same for CC and EC).
 
 <b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
 [◼◼◻◻◻] <b>Tileart</b>:
-This is for editing the items settings (tiledata on CC).
+This is for editing the items settings (same for CC and EC).
 
 <b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
-[◼◻◻◻◻] <b>Animations</b>:
+[◼◻◻◻◻] <b>Animation Frames</b>:
 This is for editing the creatures and equipment animations
 
 <b>TODO:</b> editing interface and turning an image into a frame.
-
-[◻◻◻◻◻] <b>Animation Frames</b>:
-This is for editing the creatures and equipment animations
-
-<b>TODO:</b> not started yet.
 
 [◻◻◻◻◻] <b>Waypoints</b>:
 This is for editing the default waypoints (used only on default UI).
 
 <b>TODO:</b> not started yet.
+
+[◼◼◻◻◻] <b>CC TileArt</b>:
+This are fake TGA files used for the image of CC items and terrain.
+
+<b>DONE:</b> file reading + file writing. <br>
+<b>TODO:</b> editing interface.
 
 [◻◻◻◻◻] <b>Unknown files</b>:
 Files that I have no clue what's inside:
