@@ -79,6 +79,12 @@ This are fake TGA files used for the image of CC items and terrain.
 <b>DONE:</b> file reading + file writing. <br>
 <b>TODO:</b> editing interface.
 
+[◼◼◻◻◻] <b>CC GumpArt</b>:
+This are fake TGA files used for the image of CC gump and paperdoll elements.
+
+<b>DONE:</b> file reading + file writing. <br>
+<b>TODO:</b> editing interface.
+
 [◻◻◻◻◻] <b>Unknown files</b>:
 Files that I have no clue what's inside:
 - AnimationDefinition
