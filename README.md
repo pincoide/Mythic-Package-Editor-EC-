@@ -65,7 +65,7 @@ This is for editing the items settings (same for CC and EC).
 [◼◻◻◻◻] <b>Animation Frames</b>:
 This is for editing the creatures and equipment animations
 
-<b>DONE:</b> file reading.<br>
+<b>DONE:</b> file reading (both CC and EC).<br>
 <b>TODO:</b> editing interface, file writing and turning an image into a frame.
 
 [◻◻◻◻◻] <b>Waypoints</b>:
