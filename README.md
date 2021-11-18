@@ -90,7 +90,6 @@ Files that I have no clue what's inside:
 - AnimationDefinition
 - AnimationSequence
 - EffectDefinitionCollection
-- gumpartLegacyMUL (probably works like the CC version)
 - LegacyTerrain
 
 <b>TODO:</b> not started yet.
